@@ -263,8 +263,48 @@ namespace {
                 logger->warning(RC::SOURCE_SET_EMPTY, __FILE__, __func__, __LINE__);
                 return RC::SOURCE_SET_EMPTY;
             }
+            if (pat == nullptr) {
+                logger->severe(RC::NULLPTR_ERROR, __FILE__, __func__, __LINE__);
+                return RC::NULLPTR_ERROR;
+            }
+            if (pat->getDim() != dim) {
+                logger->severe(RC::MISMATCHING_DIMENSIONS, __FILE__, __func__, __LINE__);
+                return RC::MISMATCHING_DIMENSIONS;
+            }
+            if (n == IVector::NORM::AMOUNT || tol < 0) {
+                logger->severe(RC::INVALID_ARGUMENT, __FILE__, __func__, __LINE__);
+                return RC::INVALID_ARGUMENT;    
+            }
+            if (std::isnan(tol)) {
+                logger->severe(RC::NOT_NUMBER, __FILE__, __func__, __LINE__);
+                return RC::NOT_NUMBER;
+            }
+            if (std::isinf(tol)) {
+                logger->severe(RC::INFINITY_OVERFLOW, __FILE__, __func__, __LINE__);
+                return RC::INFINITY_OVERFLOW;
+            }
+
+            double* new_data = new double[capacity];
+            for (size_t vec_idx = 0, new_idx = 0; vec_idx < size; ++vec_idx) {
+                double* cur_data = new double[dim];
+                
+                for (size_t idx = 0; idx < dim; ++idx)
+                    cur_data[idx] = data[vec_idx * dim + idx];
+                IVector* cur_vec = IVector::createVector(dim, cur_data);
+                
+                if (!IVector::equals(pat, cur_vec, n, tol))
+                    for (size_t idx = 0; idx < dim; ++idx, ++new_idx)
+                        new_data[new_idx] = data[vec_idx * size + idx];
+
+                
+                delete[] cur_data;
+                delete cur_vec;
+            }
+            delete[] data;
+            data = new_data;
+            --size;
             
-            return RC::SUCCESS;
+            return RC::SUCCESS; 
          }
 
         /*
