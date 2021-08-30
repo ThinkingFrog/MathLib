@@ -425,33 +425,32 @@ ISet* ISet::makeIntersection(ISet const * const& op1, ISet const * const& op2, I
 
     for (size_t vec_idx = 0; vec_idx < op1->getSize(); ++vec_idx) {
         double* empty_data = new double[dim];
-
-        IVector* vec1 = IVector::createVector(dim, empty_data);
-        RC err = op1->getCoords(vec_idx, vec1);
+        IVector* tmp_vec = IVector::createVector(dim, empty_data);
+        delete[] empty_data;
+        
+        RC err = op1->getCoords(vec_idx, tmp_vec);
         if (err != RC::SUCCESS) {
-            delete vec1;
-            delete[] empty_data;
-            
-            getLogger()->warning(err, __FILE__, __func__, __LINE__);
-            return new_set;
+            delete tmp_vec;
+            delete new_set;
+            getLogger()->severe(err, __FILE__, __func__, __LINE__);
+            return nullptr;
         }
         
-        IVector* vec2 = IVector::createVector(op1->getDim(), new double[op1->getDim()]);
-        err = op2->findFirstAndCopyCoords(vec1, n, tol, vec2);
-        if (err != RC::SUCCESS) {
-            delete vec1;
-            delete vec2;
-            delete[] empty_data;
-
-            getLogger()->warning(err, __FILE__, __func__, __LINE__);
-            return new_set;
+        err = op2->findFirst(tmp_vec, n, tol);
+        if (err == RC::VECTOR_NOT_FOUND) {
+            delete tmp_vec;
+            continue;
+        }
+        else if (err != RC::SUCCESS) {
+            delete tmp_vec;
+            delete new_set;
+            getLogger()->severe(err, __FILE__, __func__, __LINE__);
+            return nullptr;
         }
 
-        new_set->insert(vec1, n, tol);
+        new_set->insert(tmp_vec, n, tol);
 
-        delete vec1;
-        delete vec2;
-        delete[] empty_data;
+        delete tmp_vec;
     }
 
     return new_set;
@@ -465,36 +464,30 @@ ISet* ISet::makeUnion(ISet const * const& op1, ISet const * const& op2, IVector:
     size_t dim = op1->getDim();
     ISet* new_set = op1->clone();
 
-    for (size_t vec_idx = 0; vec_idx < op1->getSize(); ++vec_idx) {
+    for (size_t vec_idx = 0; vec_idx < op2->getSize(); ++vec_idx) {
         double* empty_data = new double[dim];
-
-        IVector* vec1 = IVector::createVector(dim, empty_data);
-        RC err = op1->getCoords(vec_idx, vec1);
-        if (err != RC::SUCCESS) {
-            delete vec1;
-            delete[] empty_data;
-            
-            getLogger()->warning(err, __FILE__, __func__, __LINE__);
-            return new_set;
-        }
-        
-        IVector* vec2 = IVector::createVector(op1->getDim(), new double[op1->getDim()]);
-        err = op2->findFirstAndCopyCoords(vec1, n, tol, vec2);
-        if (err == RC::VECTOR_NOT_FOUND) {
-            new_set->insert(vec1, n, tol);
-        }
-        else if (err != RC::SUCCESS) {
-            delete vec1;
-            delete vec2;
-            delete[] empty_data;
-
-            getLogger()->warning(err, __FILE__, __func__, __LINE__);
-            return new_set;
-        }
-
-        delete vec1;
-        delete vec2;
+        IVector* tmp_vec = IVector::createVector(dim, empty_data);
         delete[] empty_data;
+        
+        RC err = op2->getCoords(vec_idx, tmp_vec);
+        if (err != RC::SUCCESS) {
+            delete tmp_vec;
+            delete new_set;
+            getLogger()->severe(err, __FILE__, __func__, __LINE__);
+            return nullptr;
+        }
+
+        err = new_set->findFirst(tmp_vec, n, tol);
+        if (err == RC::VECTOR_NOT_FOUND)
+            new_set->insert(tmp_vec, n ,tol);
+        else if (err != RC::SUCCESS) {
+            delete tmp_vec;
+            delete new_set;
+            getLogger()->severe(err, __FILE__, __func__, __LINE__);
+            return nullptr;
+        }
+
+        delete tmp_vec;
     }
 
     return new_set;

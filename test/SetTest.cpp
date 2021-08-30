@@ -221,8 +221,56 @@ void SetTest::testFindFirstAndCopyCoords() {
     CLEAR_ALL
 }
 
-void SetTest::testMakeIntersection() {}
-void SetTest::testMakeUnion() {}
+void SetTest::testMakeIntersection() {
+    CREATE_ALL
+
+    RC err;
+
+    err = set1->insert(vec1, DEFAULT_NORM, TOLERANCE);
+    assert(err == RC::SUCCESS);
+
+    err = set2->insert(vec2, DEFAULT_NORM, TOLERANCE);
+    assert(err == RC::SUCCESS);
+
+    err = set3->insert(vec1, DEFAULT_NORM, TOLERANCE);
+    assert(err == RC::SUCCESS);
+    err = set3->insert(vec2, DEFAULT_NORM, TOLERANCE);
+    assert(err == RC::SUCCESS);
+
+    ISet* setInter1 = ISet::makeIntersection(set3, set1, DEFAULT_NORM, TOLERANCE);
+    assert(ISet::equals(setInter1, set1, DEFAULT_NORM, TOLERANCE));
+
+    ISet* setInter2 = ISet::makeIntersection(set1, set2, DEFAULT_NORM, TOLERANCE);
+    ISet* emptySet = ISet::createSet();
+    assert(ISet::equals(setInter2, emptySet, DEFAULT_NORM, TOLERANCE));
+
+    delete setInter1;
+    delete setInter2;
+    delete emptySet;
+    CLEAR_ALL
+}
+void SetTest::testMakeUnion() {
+    CREATE_ALL
+
+    RC err;
+
+    err = set1->insert(vec1, DEFAULT_NORM, TOLERANCE);
+    assert(err == RC::SUCCESS);
+
+    err = set2->insert(vec2, DEFAULT_NORM, TOLERANCE);
+    assert(err == RC::SUCCESS);
+
+    err = set3->insert(vec1, DEFAULT_NORM, TOLERANCE);
+    assert(err == RC::SUCCESS);
+    err = set3->insert(vec2, DEFAULT_NORM, TOLERANCE);
+    assert(err == RC::SUCCESS);
+
+    ISet* setUnion = ISet::makeUnion(set1, set2, DEFAULT_NORM, TOLERANCE);
+    assert(ISet::equals(setUnion, set3, DEFAULT_NORM, TOLERANCE));
+
+    delete setUnion;
+    CLEAR_ALL
+}
 void SetTest::testSub() {}
 void SetTest::testSymSub() {}
 void SetTest::testEquals() {}

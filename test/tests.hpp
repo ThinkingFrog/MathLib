@@ -12,14 +12,18 @@
 #define CREATE_VEC_TWO std::array<double, 4> data2({5, 3, 9, 7}); IVector* vec2 = IVector::createVector(data2.size(), data2.data());
 #define CREATE_VEC_THREE std::array<double, 3> data3({1, 10, 100}); IVector* vec3 = IVector::createVector(data3.size(), data3.data());
 #define CREATE_SET_ONE ISet* set1 = ISet::createSet();
-#define CREATE_ALL CREATE_LOGGER CREATE_VEC_ONE CREATE_VEC_TWO CREATE_VEC_THREE CREATE_SET_ONE
+#define CREATE_SET_TWO ISet* set2 = ISet::createSet();
+#define CREATE_SET_THREE ISet* set3 = ISet::createSet();
+#define CREATE_ALL CREATE_LOGGER CREATE_VEC_ONE CREATE_VEC_TWO CREATE_VEC_THREE CREATE_SET_ONE CREATE_SET_TWO CREATE_SET_THREE
 
 #define CLEAR_VEC_ONE delete vec1;
 #define CLEAR_VEC_TWO delete vec2;
 #define CLEAR_VEC_THREE delete vec3;
 #define CLEAR_SET_ONE delete set1;
+#define CLEAR_SET_TWO delete set2;
+#define CLEAR_SET_THREE delete set3;
 #define CLEAR_LOGGER delete logger;
-#define CLEAR_ALL CLEAR_LOGGER CLEAR_VEC_ONE CLEAR_VEC_TWO CLEAR_VEC_THREE CLEAR_SET_ONE
+#define CLEAR_ALL CLEAR_LOGGER CLEAR_VEC_ONE CLEAR_VEC_TWO CLEAR_VEC_THREE CLEAR_SET_ONE CLEAR_SET_TWO CLEAR_SET_THREE
 
 namespace VecTest {
     void testCreate();
