@@ -164,6 +164,11 @@ namespace {
             return dim * sizeof(double) + sizeof(VectorImpl);
         }
 
+        void operator delete(void* ptr, size_t size) {
+            if (ptr)
+                delete[] reinterpret_cast<u_int8_t*>(ptr);
+        }
+
         ~VectorImpl() = default;
     
     private:
