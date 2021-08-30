@@ -271,10 +271,95 @@ void SetTest::testMakeUnion() {
     delete setUnion;
     CLEAR_ALL
 }
-void SetTest::testSub() {}
-void SetTest::testSymSub() {}
-void SetTest::testEquals() {}
-void SetTest::testSubSet() {}
+void SetTest::testSub() {
+    CREATE_ALL
+
+    RC err;
+
+    err = set1->insert(vec1, DEFAULT_NORM, TOLERANCE);
+    assert(err == RC::SUCCESS);
+
+    err = set2->insert(vec2, DEFAULT_NORM, TOLERANCE);
+    assert(err == RC::SUCCESS);
+
+    err = set3->insert(vec1, DEFAULT_NORM, TOLERANCE);
+    assert(err == RC::SUCCESS);
+    err = set3->insert(vec2, DEFAULT_NORM, TOLERANCE);
+    assert(err == RC::SUCCESS);
+
+    ISet* sub1 = ISet::sub(set3, set1, DEFAULT_NORM, TOLERANCE);
+    assert(ISet::equals(sub1, set2, DEFAULT_NORM, TOLERANCE));
+    
+    ISet* sub2 = ISet::sub(set3, set2, DEFAULT_NORM, TOLERANCE);
+    assert(ISet::equals(sub2, set1, DEFAULT_NORM, TOLERANCE));
+
+    delete sub1;
+    delete sub2;
+    CLEAR_ALL
+}
+void SetTest::testSymSub() {
+    CREATE_ALL
+
+    RC err;
+
+    err = set1->insert(vec1, DEFAULT_NORM, TOLERANCE);
+    assert(err == RC::SUCCESS);
+    err = set1->insert(vec2, DEFAULT_NORM, TOLERANCE);
+    assert(err == RC::SUCCESS);
+
+    err = set2->insert(vec2, DEFAULT_NORM, TOLERANCE);
+    assert(err == RC::SUCCESS);
+    err = set2->insert(vec4, DEFAULT_NORM, TOLERANCE);
+    assert(err == RC::SUCCESS);
+
+    err = set3->insert(vec1, DEFAULT_NORM, TOLERANCE);
+    assert(err == RC::SUCCESS);
+    err = set3->insert(vec4, DEFAULT_NORM, TOLERANCE);
+    assert(err == RC::SUCCESS);
+
+    ISet* symSub = ISet::symSub(set1, set2, DEFAULT_NORM, TOLERANCE);
+    assert(ISet::equals(symSub, set3, DEFAULT_NORM, TOLERANCE));
+
+    delete symSub;
+    CLEAR_ALL
+}
+void SetTest::testEquals() {
+    CREATE_ALL
+
+    RC err;
+
+    err = set1->insert(vec1, DEFAULT_NORM, TOLERANCE);
+    assert(err == RC::SUCCESS);
+    err = set2->insert(vec1, DEFAULT_NORM, TOLERANCE);
+    assert(err == RC::SUCCESS);
+    err = set3->insert(vec2, DEFAULT_NORM, TOLERANCE);
+    assert(err == RC::SUCCESS);
+
+    assert(ISet::equals(set1, set1, DEFAULT_NORM, TOLERANCE));
+    assert(ISet::equals(set2, set2, DEFAULT_NORM, TOLERANCE));
+    assert(ISet::equals(set3, set3, DEFAULT_NORM, TOLERANCE));
+    assert(!ISet::equals(set1, set3, DEFAULT_NORM, TOLERANCE));
+
+    CLEAR_ALL
+}
+void SetTest::testSubSet() {
+    CREATE_ALL
+
+    RC err;
+
+    err = set1->insert(vec1, DEFAULT_NORM, TOLERANCE);
+    assert(err == RC::SUCCESS);
+    err = set2->insert(vec1, DEFAULT_NORM, TOLERANCE);
+    assert(err == RC::SUCCESS);
+    err = set2->insert(vec2, DEFAULT_NORM, TOLERANCE);
+    assert(err == RC::SUCCESS);
+    err = set3->insert(vec3, DEFAULT_NORM, TOLERANCE);
+    assert(err == RC::SUCCESS);
+
+    assert(ISet::subSet(set1, set2, DEFAULT_NORM, TOLERANCE));
+    assert(!ISet::subSet(set1, set3, DEFAULT_NORM, TOLERANCE));
+    CLEAR_ALL
+}
 
 void SetTest::testAll() {
     std::cout << "Running all Set tests" << std::endl;
@@ -297,7 +382,6 @@ void SetTest::testAll() {
     testSymSub();
     testEquals();
     testSubSet();
-
 
     std::cout << "Successfully ran all Set tests" << std::endl;
 }

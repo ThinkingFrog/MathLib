@@ -503,29 +503,27 @@ ISet* ISet::sub(ISet const * const& op1, ISet const * const& op2, IVector::NORM 
 
     for (size_t vec_idx = 0; vec_idx < op1->getSize(); ++vec_idx) {
         double* empty_data = new double[dim];
-
         IVector* vec1 = IVector::createVector(dim, empty_data);
+        delete[] empty_data;
+
         RC err = op1->getCoords(vec_idx, vec1);
         if (err != RC::SUCCESS) {
             delete vec1;
-            delete[] empty_data;
-            
             getLogger()->warning(err, __FILE__, __func__, __LINE__);
             return new_set;
         }
         
         err = op2->findFirst(vec1, n, tol);
-        if (err != RC::SUCCESS) {
-            delete vec1;
-            delete[] empty_data;
 
+        if (err == RC::VECTOR_NOT_FOUND) {
+            new_set->insert(vec1, n, tol);
+        }
+        else if (err != RC::SUCCESS) {
             getLogger()->warning(err, __FILE__, __func__, __LINE__);
+            delete vec1;
             return new_set;
         }
-        new_set->insert(vec1, n, tol);
-
         delete vec1;
-        delete[] empty_data;
     }
 
     return new_set;
@@ -557,12 +555,12 @@ bool ISet::subSet(ISet const * const& op1, ISet const * const& op2, IVector::NOR
 
     for (size_t vec_idx = 0; vec_idx < op1->getSize(); ++vec_idx) {
         double* empty_data = new double[dim];
-
         IVector* vec1 = IVector::createVector(dim, empty_data);
+        delete[] empty_data;
+        
         RC err = op1->getCoords(vec_idx, vec1);
         if (err != RC::SUCCESS) {
             delete vec1;
-            delete[] empty_data;
             
             getLogger()->warning(err, __FILE__, __func__, __LINE__);
             return false;
@@ -570,18 +568,17 @@ bool ISet::subSet(ISet const * const& op1, ISet const * const& op2, IVector::NOR
         
         err = op2->findFirst(vec1, n, tol);
         if (err == RC::VECTOR_NOT_FOUND) {
+            delete vec1;
             return false;
         }
         else if (err != RC::SUCCESS) {
             delete vec1;
-            delete[] empty_data;
 
             getLogger()->warning(err, __FILE__, __func__, __LINE__);
             return false;
         }
 
         delete vec1;
-        delete[] empty_data;
     }
 
     return true;
