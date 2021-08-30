@@ -203,9 +203,23 @@ void SetTest::testFindFirstAndCopy() {
     assert(err == RC::SUCCESS);
     assert(IVector::equals(test, vec2, DEFAULT_NORM, TOLERANCE));
 
+    delete test;
     CLEAR_ALL
 }
-void SetTest::testFindFirstAndCopyCoords() {}
+void SetTest::testFindFirstAndCopyCoords() {
+    CREATE_ALL
+
+    RC err;
+
+    err = set1->insert(vec2, DEFAULT_NORM, TOLERANCE);
+    assert(err == RC::SUCCESS);
+
+    err = set1->findFirstAndCopyCoords(vec2, DEFAULT_NORM, TOLERANCE, vec1);
+    assert(err == RC::SUCCESS);
+    assert(IVector::equals(vec1, vec2, DEFAULT_NORM, TOLERANCE));
+
+    CLEAR_ALL
+}
 
 void SetTest::testMakeIntersection() {}
 void SetTest::testMakeUnion() {}

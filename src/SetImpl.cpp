@@ -148,7 +148,7 @@ namespace {
             return err;
         }
         RC findFirstAndCopyCoords(IVector const * const& pat, IVector::NORM n, double tol, IVector * const& val) const { 
-                        if (pat == nullptr) {
+            if (pat == nullptr) {
                 logger->severe(RC::NULLPTR_ERROR, __FILE__, __func__, __LINE__);
                 return RC::NULLPTR_ERROR;
             }
@@ -182,8 +182,9 @@ namespace {
                 
                 delete cur_vec;
                 if (found) {
-                    val->setData(dim, cur_data);
-                    return RC::SUCCESS;
+                    RC err = val->setData(dim, cur_data);
+                    delete[] cur_data;
+                    return err;
                 }
                 delete[] cur_data;
             }
@@ -390,7 +391,7 @@ namespace {
             last_vec_idx = 0;
         }
         SetImpl(double const* const& other_data, size_t other_size, size_t other_dim) { 
-            capacity = other_size;
+            capacity = other_size * other_dim;
             data = new double[capacity];
             for (size_t idx = 0; idx < other_size * other_dim; ++idx)
                 data[idx] = other_data[idx];
