@@ -1,4 +1,3 @@
-#pragma once
 #include <cstddef>
 #include "IVector.h"
 #include "ISetControlBlock.h"
@@ -17,14 +16,9 @@ public:
 
 private:
     ISet* set;
+    size_t cur_idx;
 protected:
-    SetImplControlBlock() {
-        cur_idx = 0;
-    };
-
-    SetImplControlBlock() {
-        cur_idx = 0;
-    };
+    SetImplControlBlock(ISet* const& set) : set(set), cur_idx(0) {};
 };
 
 ISetControlBlock::~ISetControlBlock() = default;

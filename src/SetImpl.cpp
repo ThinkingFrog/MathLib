@@ -1,5 +1,6 @@
 #include <cmath>
 #include <map>
+#include <vector>
 #include "ISet.h"
 #include "ISetControlBlock.h"
 
@@ -231,8 +232,10 @@ namespace {
             for (size_t idx = 0; idx < dim; ++idx)
                 data[size * dim + idx] = val_data[idx];
             
-            vec_idxs.insert(std::pair<double*, size_t>(data + size * dim, last_vec_idx++));
+            unique_idxs_to_order.insert(std::pair<size_t, size_t>(last_vec_idx, size));
+            order_idxs_to_unique.insert(std::pair<size_t, size_t>(size, last_vec_idx));
             ++size;
+            ++last_vec_idx;
             
             return RC::SUCCESS;
         }
@@ -248,13 +251,23 @@ namespace {
             }
 
             double* new_data = new double[capacity];
-            for (size_t vec_idx = 0, new_idx = 0; vec_idx < size; ++vec_idx) {
-                if (vec_idx != index)
+            std::map<size_t, size_t> new_unique_idxs_to_order;
+            std::map<size_t, size_t> new_order_idxs_to_unique;
+
+            for (size_t vec_idx = 0, new_idx = 0, new_vec_idx = 0; vec_idx < size; ++vec_idx) {
+                if (vec_idx != index) {
+                    new_unique_idxs_to_order.insert(std::pair<size_t, size_t>(order_idxs_to_unique.at(vec_idx), new_vec_idx));
+                    new_order_idxs_to_unique.insert(std::pair<size_t, size_t>(new_vec_idx, unique_idxs_to_order.at(vec_idx)));
+                    ++new_vec_idx;
                     for (size_t idx = 0; idx < dim; ++idx, ++new_idx)
                         new_data[new_idx] = data[vec_idx * size + idx];
+                }
             }
             delete[] data;
             data = new_data;
+
+            unique_idxs_to_order = new_unique_idxs_to_order;
+            order_idxs_to_unique = new_order_idxs_to_unique;
             --size;
             
             return RC::SUCCESS; 
@@ -284,25 +297,35 @@ namespace {
                 logger->severe(RC::INFINITY_OVERFLOW, __FILE__, __func__, __LINE__);
                 return RC::INFINITY_OVERFLOW;
             }
-
+        
             double* new_data = new double[capacity];
-            for (size_t vec_idx = 0, new_idx = 0; vec_idx < size; ++vec_idx) {
+            std::vector<size_t> removed_idxs;
+            std::map<size_t, size_t> new_unique_idxs_to_order;
+            std::map<size_t, size_t> new_order_idxs_to_unique;
+
+            for (size_t vec_idx = 0, new_idx = 0, new_vec_idx = 0; vec_idx < size; ++vec_idx) {
                 double* cur_data = new double[dim];
                 
                 for (size_t idx = 0; idx < dim; ++idx)
                     cur_data[idx] = data[vec_idx * dim + idx];
                 IVector* cur_vec = IVector::createVector(dim, cur_data);
                 
-                if (!IVector::equals(pat, cur_vec, n, tol))
+                if (!IVector::equals(pat, cur_vec, n, tol)) {
+                    new_unique_idxs_to_order.insert(std::pair<size_t, size_t>(order_idxs_to_unique.at(vec_idx), new_vec_idx));
+                    new_order_idxs_to_unique.insert(std::pair<size_t, size_t>(new_vec_idx, unique_idxs_to_order.at(vec_idx)));
+                    ++new_vec_idx;
                     for (size_t idx = 0; idx < dim; ++idx, ++new_idx)
                         new_data[new_idx] = data[vec_idx * size + idx];
+                }
 
-                
                 delete[] cur_data;
                 delete cur_vec;
             }
             delete[] data;
             data = new_data;
+
+            unique_idxs_to_order = new_unique_idxs_to_order;
+            order_idxs_to_unique = new_order_idxs_to_unique;
             --size;
             
             return RC::SUCCESS; 
@@ -371,11 +394,16 @@ namespace {
         ~SetImpl() {
             delete[] data;
         }
+
+        // RC getByUniqueIndex(IVector *const &vec, size_t &index, size_t indexInc) {
+// 
+        // }
         
     private:
         static ILogger* logger;
         double* data;
-        std::map<double*, size_t> vec_idxs;
+        std::map<size_t, size_t> unique_idxs_to_order;
+        std::map<size_t, size_t> order_idxs_to_unique;
         size_t last_vec_idx;
         size_t capacity; // amount of allocated double values
         size_t size;    // amount of vectors in set
