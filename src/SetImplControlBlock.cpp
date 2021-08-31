@@ -3,22 +3,33 @@
 #include "ISetControlBlock.h"
 #include "ISet.h"
 
+class SetImpl : public ISet {
+public:
+    RC getByUniqueIndex(IVector *const &vec, size_t &index, size_t indexInc);
+    RC getFirstByUniqueIndex(IVector *const &vec, size_t &index);
+    RC getLastByUniqueIndex(IVector *const &vec, size_t &index);
+};
 
 class SetImplControlBlock : public ISetControlBlock {
 public:
-    virtual RC getNext(IVector *const &vec, size_t &index, size_t indexInc = 1) const {
-
+    RC getNext(IVector *const &vec, size_t &index, size_t indexInc = 1) const {
+        return set->getByUniqueIndex(vec, index, indexInc);
     }
-    virtual RC getPrevious(IVector *const &vec, size_t &index, size_t indexInc = 1) const = 0;
+    RC getPrevious(IVector *const &vec, size_t &index, size_t indexInc = 1) const {
+        return set->getByUniqueIndex(vec, index, -indexInc);
+    }
     
-    virtual RC getBegin(IVector *const &vec, size_t &index) const = 0;
-    virtual RC getEnd(IVector *const &vec, size_t &index) const = 0;
+    RC getBegin(IVector *const &vec, size_t &index) const {
+        return set->getFirstByUniqueIndex(vec, index);
+    }
+    RC getEnd(IVector *const &vec, size_t &index) const {
+        return set->getLastByUniqueIndex(vec, index);
+    }
 
 private:
-    ISet* set;
-    size_t cur_idx;
+    SetImpl* set;
 protected:
-    SetImplControlBlock(ISet* const& set) : set(set), cur_idx(0) {};
+    SetImplControlBlock(SetImpl* const& set) : set(set) {};
 };
 
 ISetControlBlock::~ISetControlBlock() = default;
