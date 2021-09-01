@@ -1,7 +1,6 @@
 #include <cstddef>
 #include "IVector.h"
 #include "ISetControlBlock.h"
-#include "ISet.h"
 #include "SetImpl.h"
 
 

@@ -1,7 +1,6 @@
 #include <cmath>
 #include <map>
 #include <vector>
-#include "ISetControlBlock.h"
 #include "SetImplControlBlock.h"
 #include "SetImpl.h"
 
