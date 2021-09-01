@@ -336,18 +336,6 @@ SetImpl::~SetImpl() {
     delete control_block;
 }
 
-RC SetImpl::getByUniqueIndex(IVector *const &vec, size_t &index, size_t indexInc) {
-    index = order_idxs_to_unique.at(unique_idxs_to_order.at(index) + indexInc);
-    return getCoords(unique_idxs_to_order.at(index), vec);
-}
-RC SetImpl::getFirstByUniqueIndex(IVector *const &vec, size_t &index) {
-    index = order_idxs_to_unique.at(0);
-    return getCoords(0, vec);
-}
-RC SetImpl::getLastByUniqueIndex(IVector *const &vec, size_t &index) {
-    index = order_idxs_to_unique.at(size - 1);
-    return getCoords(size - 1, vec);
-}
 SetImpl::SetImpl() {
     control_block = SetImplControlBlock::createControlBlock(this);
 

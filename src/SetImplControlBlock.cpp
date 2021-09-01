@@ -5,10 +5,10 @@
 
 
 RC SetImplControlBlock::getNext(IVector *const &vec, size_t &index, size_t indexInc) const {
-    return set->getByUniqueIndex(vec, index, indexInc);
+    return set->getNextByUniqueIndex(vec, index, indexInc);
 }
 RC SetImplControlBlock::getPrevious(IVector *const &vec, size_t &index, size_t indexInc) const {
-    return set->getByUniqueIndex(vec, index, -indexInc);
+    return set->getPrevByUniqueIndex(vec, index, indexInc);
 }
 
 RC SetImplControlBlock::getBegin(IVector *const &vec, size_t &index) const {

@@ -31,20 +31,12 @@ public:
     public:
         IteratorImpl(SetImplControlBlock* const& controlBlock, size_t index, IVector* vector);
 
-        /*
-        * Create iterator associated with next/previous position
-        *
-        * @param [in] indexInc Quantity of steps forward
-        */
         IIterator * getNext(size_t indexInc = 1) const;
         IIterator * getPrevious(size_t indexInc = 1) const;
         IIterator * clone() const;
 
         static RC setLogger(ILogger * const pLogger);
 
-        /*
-        * Moves iterator forward/backward
-        */
         RC next(size_t indexInc = 1);
         RC previous(size_t indexInc = 1);
         
@@ -53,30 +45,21 @@ public:
         RC makeBegin();
         RC makeEnd();
 
-        /*
-        * Getter of value (same semantic as ISet::getCopy)
-        */
         RC getVectorCopy(IVector *& val) const;
-        /*
-        * Getter of value (same semantic as ISet::getCoords)
-        */
         RC getVectorCoords(IVector * const& val) const;
 
         ~IteratorImpl();
 
     protected:
-        /*
-        * As long as iterator refers to vector in ISet, which corresponds to unique index, we can compare iterators by this index
-        */
         size_t getIndex() const;
         IteratorImpl();
     private:
         size_t cur_unique_idx;
         IVector* cur_vector;
-        ISetControlBlock* control_block;
+        SetImplControlBlock* control_block;
         static ILogger* logger;
+        bool valid;
     };
-
 
     IIterator *getIterator(size_t index) const;
     IIterator *getBegin() const;
@@ -84,7 +67,8 @@ public:
     
     ~SetImpl();
 
-    RC getByUniqueIndex(IVector *const &vec, size_t &index, size_t indexInc);
+    RC getNextByUniqueIndex(IVector *const &vec, size_t &index, size_t indexInc);
+    RC getPrevByUniqueIndex(IVector *const &vec, size_t &index, size_t indexInc);
     RC getFirstByUniqueIndex(IVector *const &vec, size_t &index);
     RC getLastByUniqueIndex(IVector *const &vec, size_t &index);
 
