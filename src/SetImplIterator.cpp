@@ -1,6 +1,12 @@
 #include "ISet.h"
 #include "SetImpl.h"
 
+SetImpl::IteratorImpl::IteratorImpl(SetImplControlBlock* const& cb, size_t index, IVector* vector)
+{
+    control_block = cb;
+    cur_unique_idx = index;
+    cur_vector = vector;
+}
 /*
 * Create iterator associated with next/previous position
 *
@@ -39,6 +45,7 @@ RC SetImpl::IteratorImpl::getVectorCopy(IVector *& val) const { return RC::SUCCE
 RC SetImpl::IteratorImpl::getVectorCoords(IVector * const& val) const { return RC::SUCCESS; }
 
 SetImpl::IteratorImpl::~IteratorImpl()  = default;
+
 ISet::IIterator::~IIterator()  = default;
 
 size_t SetImpl::IteratorImpl::getIndex() const { return 0; }

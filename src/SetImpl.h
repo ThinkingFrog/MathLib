@@ -29,6 +29,8 @@ public:
 
     class IteratorImpl : public IIterator {
     public:
+        IteratorImpl(SetImplControlBlock* const& controlBlock, size_t index, IVector* vector);
+
         /*
         * Create iterator associated with next/previous position
         *
@@ -69,6 +71,8 @@ public:
         size_t getIndex() const;
         IteratorImpl();
     private:
+        size_t cur_unique_idx;
+        IVector* cur_vector;
         ISetControlBlock* control_block;
         static ILogger* logger;
     };
