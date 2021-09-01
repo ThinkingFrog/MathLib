@@ -6,7 +6,7 @@ include_directories(include)
 include_directories(test)
 
 file(GLOB SRC_VECTOR src/VectorImpl.cpp src/LoggerImpl.cpp)
-file(GLOB SRC_SET src/SetImpl.cpp src/LoggerImpl.cpp src/SetImplControlBlock.cpp)
+file(GLOB SRC_SET src/SetImpl.h src/SetImplControlBlock.h src/LoggerImpl.cpp src/SetImpl.cpp src/SetImplIterator.cpp src/SetImplControlBlock.cpp)
 
 file(GLOB TEST test/*.cpp)
 
