@@ -28,7 +28,7 @@ ISet::IIterator* SetImpl::IteratorImpl::getPrevious(size_t indexInc) const {
     return copy;
 }
 ISet::IIterator* SetImpl::IteratorImpl::clone() const {
-    return new (std::nothrow) IteratorImpl(control_block, cur_unique_idx, cur_vector); 
+    return new (std::nothrow) IteratorImpl(control_block, cur_unique_idx, cur_vector->clone()); 
 }
 
 RC SetImpl::IteratorImpl::setLogger(ILogger * const pLogger) { 
@@ -76,7 +76,9 @@ RC SetImpl::IteratorImpl::getVectorCoords(IVector * const& val) const {
     return val->setData(cur_vector->getDim(), cur_vector->getData());
 }
 
-SetImpl::IteratorImpl::~IteratorImpl()  = default;
+SetImpl::IteratorImpl::~IteratorImpl() {
+    delete cur_vector;
+}
 ISet::IIterator::~IIterator()  = default;
 
 size_t SetImpl::IteratorImpl::getIndex() const {
@@ -92,11 +94,13 @@ ISet::IIterator* SetImpl::getIterator(size_t index) const {
     IVector* vec;
     RC err = getCopy(index, vec);
     if (err != RC::SUCCESS) {
+        delete vec;
         logger->severe(err, __FILE__, __func__, __LINE__);
         return nullptr;
     }
     IteratorImpl* iter = new (std::nothrow) IteratorImpl(control_block, order_idxs_to_unique.at(index), vec);
     if (iter == nullptr) {
+        delete vec;
         logger->severe(RC::ALLOCATION_ERROR, __FILE__, __func__, __LINE__);
         return nullptr;
     }

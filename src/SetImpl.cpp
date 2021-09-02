@@ -446,15 +446,18 @@ ISet* ISet::makeUnion(ISet const * const& op1, ISet const * const& op2, IVector:
     size_t dim = op1->getDim();
     ISet* new_set = op1->clone();
 
-    for (size_t vec_idx = 0; vec_idx < op2->getSize(); ++vec_idx) {
+    // for (size_t vec_idx = 0; vec_idx < op2->getSize(); ++vec_idx) {
+    IIterator* set2_iter = op2->getBegin();
+    for (; set2_iter->isValid(); set2_iter->next()) {
         double* empty_data = new double[dim];
         IVector* tmp_vec = IVector::createVector(dim, empty_data);
         delete[] empty_data;
         
-        RC err = op2->getCoords(vec_idx, tmp_vec);
+        RC err = set2_iter->getVectorCoords(tmp_vec);
         if (err != RC::SUCCESS) {
             delete tmp_vec;
             delete new_set;
+            delete set2_iter;
             getLogger()->severe(err, __FILE__, __func__, __LINE__);
             return nullptr;
         }
@@ -465,12 +468,14 @@ ISet* ISet::makeUnion(ISet const * const& op1, ISet const * const& op2, IVector:
         else if (err != RC::SUCCESS) {
             delete tmp_vec;
             delete new_set;
+            delete set2_iter;
             getLogger()->severe(err, __FILE__, __func__, __LINE__);
             return nullptr;
         }
 
         delete tmp_vec;
     }
+    delete set2_iter;
 
     return new_set;
 }
