@@ -94,7 +94,6 @@ ISet::IIterator* SetImpl::getIterator(size_t index) const {
     IVector* vec;
     RC err = getCopy(index, vec);
     if (err != RC::SUCCESS) {
-        delete vec;
         logger->severe(err, __FILE__, __func__, __LINE__);
         return nullptr;
     }

@@ -85,6 +85,5 @@ private:
 
 protected:
     SetImpl();
-    SetImpl(double const* const& other_data, size_t other_size, size_t other_dim);
-    
+    SetImpl(double const* const& other_data, size_t other_size, size_t other_dim, std::map<size_t, size_t> other_unique_map, std::map<size_t, size_t> other_order_map, size_t other_last_idx);
 };

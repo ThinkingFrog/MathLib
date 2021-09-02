@@ -19,7 +19,7 @@ ILogger* SetImpl::getLogger() {
 }
 
 ISet* SetImpl::createSet() { return new (std::nothrow) SetImpl; }
-ISet* SetImpl::clone() const { return new (std::nothrow) SetImpl(data, size, dim); };
+ISet* SetImpl::clone() const { return new (std::nothrow) SetImpl(data, size, dim, unique_idxs_to_order, order_idxs_to_unique, last_vec_idx); };
 
 size_t SetImpl::getDim() const { return dim; }
 size_t SetImpl::getSize() const { return size; }
@@ -228,9 +228,8 @@ RC SetImpl::insert(IVector const * const& val, IVector::NORM n, double tol) {
         data = tmp;
     }
 
-    const double* val_data = val->getData();
     for (size_t idx = 0; idx < dim; ++idx)
-        data[size * dim + idx] = val_data[idx];
+        data[size * dim + idx] = vec_data[idx];
     
     unique_idxs_to_order.insert(std::pair<size_t, size_t>(last_vec_idx, size));
     order_idxs_to_unique.insert(std::pair<size_t, size_t>(size, last_vec_idx));
@@ -346,7 +345,7 @@ SetImpl::SetImpl() {
     dim = 0;
     last_vec_idx = 0;
 }
-SetImpl::SetImpl(double const* const& other_data, size_t other_size, size_t other_dim) { 
+SetImpl::SetImpl(double const* const& other_data, size_t other_size, size_t other_dim, std::map<size_t, size_t> other_unique_map, std::map<size_t, size_t> other_order_map, size_t other_last_idx) { 
     control_block = SetImplControlBlock::createControlBlock(this);
     
     capacity = other_size * other_dim;
@@ -356,6 +355,10 @@ SetImpl::SetImpl(double const* const& other_data, size_t other_size, size_t othe
     
     size = other_size;
     dim = other_dim;
+    last_vec_idx = other_last_idx;
+
+    unique_idxs_to_order = other_unique_map;
+    order_idxs_to_unique = other_order_map;
 }
 
 RC ISet::setLogger(ILogger* const logger) {
@@ -446,7 +449,6 @@ ISet* ISet::makeUnion(ISet const * const& op1, ISet const * const& op2, IVector:
     size_t dim = op1->getDim();
     ISet* new_set = op1->clone();
 
-    // for (size_t vec_idx = 0; vec_idx < op2->getSize(); ++vec_idx) {
     IIterator* set2_iter = op2->getBegin();
     for (; set2_iter->isValid(); set2_iter->next()) {
         double* empty_data = new double[dim];
@@ -540,15 +542,16 @@ bool ISet::subSet(ISet const * const& op1, ISet const * const& op2, IVector::NOR
 
     size_t dim = op1->getDim();
 
-    for (size_t vec_idx = 0; vec_idx < op1->getSize(); ++vec_idx) {
+    IIterator* vec1_iter = op1->getBegin();
+    for (; vec1_iter != nullptr && vec1_iter->isValid(); vec1_iter->next()) {
         double* empty_data = new double[dim];
         IVector* vec1 = IVector::createVector(dim, empty_data);
         delete[] empty_data;
         
-        RC err = op1->getCoords(vec_idx, vec1);
+        RC err = vec1_iter->getVectorCoords(vec1);
         if (err != RC::SUCCESS) {
             delete vec1;
-            
+            delete vec1_iter;
             getLogger()->warning(err, __FILE__, __func__, __LINE__);
             return false;
         }
@@ -556,17 +559,19 @@ bool ISet::subSet(ISet const * const& op1, ISet const * const& op2, IVector::NOR
         err = op2->findFirst(vec1, n, tol);
         if (err == RC::VECTOR_NOT_FOUND) {
             delete vec1;
+            delete vec1_iter;
             return false;
         }
         else if (err != RC::SUCCESS) {
             delete vec1;
-
+            delete vec1_iter;
             getLogger()->warning(err, __FILE__, __func__, __LINE__);
             return false;
         }
 
         delete vec1;
     }
+    delete vec1_iter;
 
     return true;
 }
