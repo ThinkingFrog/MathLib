@@ -19,7 +19,9 @@ ILogger* SetImpl::getLogger() {
 }
 
 ISet* SetImpl::createSet() { return new (std::nothrow) SetImpl; }
-ISet* SetImpl::clone() const { return new (std::nothrow) SetImpl(data, size, dim, unique_idxs_to_order, order_idxs_to_unique, last_vec_idx); };
+ISet* SetImpl::clone() const {
+    return new (std::nothrow) SetImpl(data, size, dim, unique_idxs_to_order, order_idxs_to_unique, last_vec_idx); 
+}
 
 size_t SetImpl::getDim() const { return dim; }
 size_t SetImpl::getSize() const { return size; }
@@ -379,15 +381,17 @@ ISet* ISet::makeIntersection(ISet const * const& op1, ISet const * const& op2, I
     size_t dim = op1->getDim();
     ISet* new_set = ISet::createSet();
 
-    for (size_t vec_idx = 0; vec_idx < op1->getSize(); ++vec_idx) {
+    IIterator* set1_iter = op1->getBegin();
+    for (; set1_iter->isValid(); set1_iter->next()) {
         double* empty_data = new double[dim];
         IVector* tmp_vec = IVector::createVector(dim, empty_data);
         delete[] empty_data;
         
-        RC err = op1->getCoords(vec_idx, tmp_vec);
+        RC err = set1_iter->getVectorCoords(tmp_vec);
         if (err != RC::SUCCESS) {
             delete tmp_vec;
             delete new_set;
+            delete set1_iter;
             getLogger()->severe(err, __FILE__, __func__, __LINE__);
             return nullptr;
         }
@@ -400,6 +404,7 @@ ISet* ISet::makeIntersection(ISet const * const& op1, ISet const * const& op2, I
         else if (err != RC::SUCCESS) {
             delete tmp_vec;
             delete new_set;
+            delete set1_iter;
             getLogger()->severe(err, __FILE__, __func__, __LINE__);
             return nullptr;
         }
@@ -408,15 +413,19 @@ ISet* ISet::makeIntersection(ISet const * const& op1, ISet const * const& op2, I
 
         delete tmp_vec;
     }
-    for (size_t vec_idx = 0; vec_idx < op2->getSize(); ++vec_idx) {
+    delete set1_iter;
+
+    IIterator* set2_iter = op2->getBegin();
+    for (; set2_iter->isValid(); set2_iter->next()) {
         double* empty_data = new double[dim];
         IVector* tmp_vec = IVector::createVector(dim, empty_data);
         delete[] empty_data;
         
-        RC err = op2->getCoords(vec_idx, tmp_vec);
+        RC err = set2_iter->getVectorCoords(tmp_vec);
         if (err != RC::SUCCESS) {
             delete tmp_vec;
             delete new_set;
+            delete set2_iter;
             getLogger()->severe(err, __FILE__, __func__, __LINE__);
             return nullptr;
         }
@@ -429,6 +438,7 @@ ISet* ISet::makeIntersection(ISet const * const& op1, ISet const * const& op2, I
         else if (err != RC::SUCCESS) {
             delete tmp_vec;
             delete new_set;
+            delete set2_iter;
             getLogger()->severe(err, __FILE__, __func__, __LINE__);
             return nullptr;
         }
@@ -437,6 +447,7 @@ ISet* ISet::makeIntersection(ISet const * const& op1, ISet const * const& op2, I
 
         delete tmp_vec;
     }
+    delete set2_iter;
 
     return new_set;
 }
@@ -490,14 +501,16 @@ ISet* ISet::sub(ISet const * const& op1, ISet const * const& op2, IVector::NORM 
     size_t dim = op1->getDim();
     ISet* new_set = ISet::createSet();
 
-    for (size_t vec_idx = 0; vec_idx < op1->getSize(); ++vec_idx) {
+    IIterator* set1_iter = op1->getBegin();
+    for (; set1_iter->isValid(); set1_iter->next()) {
         double* empty_data = new double[dim];
         IVector* vec1 = IVector::createVector(dim, empty_data);
         delete[] empty_data;
 
-        RC err = op1->getCoords(vec_idx, vec1);
+        RC err = set1_iter->getVectorCoords(vec1);
         if (err != RC::SUCCESS) {
             delete vec1;
+            delete set1_iter;
             getLogger()->warning(err, __FILE__, __func__, __LINE__);
             return new_set;
         }
@@ -510,10 +523,12 @@ ISet* ISet::sub(ISet const * const& op1, ISet const * const& op2, IVector::NORM 
         else if (err != RC::SUCCESS) {
             getLogger()->warning(err, __FILE__, __func__, __LINE__);
             delete vec1;
+            delete set1_iter;
             return new_set;
         }
         delete vec1;
     }
+    delete set1_iter;
 
     return new_set;
 }
