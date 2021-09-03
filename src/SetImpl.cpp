@@ -347,7 +347,7 @@ SetImpl::SetImpl() {
     dim = 0;
     last_vec_idx = 0;
 }
-SetImpl::SetImpl(double const* const& other_data, size_t other_size, size_t other_dim, std::map<size_t, size_t> other_unique_map, std::map<size_t, size_t> other_order_map, size_t other_last_idx) { 
+SetImpl::SetImpl(double const* const& other_data, size_t other_size, size_t other_dim, const std::map<size_t, size_t>& other_unique_map, const std::map<size_t, size_t>& other_order_map, size_t other_last_idx) { 
     control_block = SetImplControlBlock::createControlBlock(this);
     
     capacity = other_size * other_dim;
