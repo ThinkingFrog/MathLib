@@ -1,9 +1,7 @@
 #pragma once
-#include "IVector.h"
-#include "IMultiIndex.h"
-#include <cstddef>
+#include "ICompactControlBlock.h"
 
-class ICompactControlBlock {
+class CompactImplControlBlock : public ICompactControlBlock {
 public:
     /*
     * Control block moves iterator forward in grid of compact. When reached last node of an axis, next axis position will be incremented. Next axis defined by bypassOrder
@@ -12,7 +10,7 @@ public:
     *
     * @param [in] bypassOrder Multi-index, that defining bypass orred of axis
     */
-    virtual RC get(IMultiIndex * const &currentIndex, IMultiIndex const * const &bypassOrder) const = 0;
+    RC get(IMultiIndex * const &currentIndex, IMultiIndex const * const &bypassOrder) const;
     /*
     * Control block clculates vector corresponding to multi-index
     * 
@@ -20,14 +18,7 @@ public:
     *
     * @param [in] val Buffer for vector data
     */
-    virtual RC get(IMultiIndex const * const &currentIndex, IVector* const &val) const = 0;
-
-    virtual ~ICompactControlBlock() = 0;
-
+    RC get(IMultiIndex const * const &currentIndex, IVector* const &val) const;
 private:
-    ICompactControlBlock(ICompactControlBlock const &);
-    ICompactControlBlock& operator=(ICompactControlBlock const &);
-
 protected:
-    ICompactControlBlock() = default;
 };

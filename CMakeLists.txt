@@ -6,12 +6,17 @@ include_directories(include)
 include_directories(test)
 
 file(GLOB SRC_VECTOR src/VectorImpl.cpp src/LoggerImpl.cpp)
-file(GLOB SRC_SET src/SetImpl.h src/SetImplControlBlock.h src/LoggerImpl.cpp src/SetImpl.cpp src/SetImplIterator.cpp src/SetImplControlBlock.cpp)
+file(GLOB SRC_SET src/SetImpl.h src/SetImplControlBlock.h
+    src/LoggerImpl.cpp src/SetImpl.cpp src/SetImplIterator.cpp src/SetImplControlBlock.cpp)
+file(GLOB SRC_COMPACT src/CompactImpl.h src/CompactImplControlBlock.h src/MultiIndexImpl.h
+    src/LoggerImpl.cpp src/CompactImpl.cpp src/CompactImplIterator.cpp
+    src/CompactImplControlBlock.cpp src/MultiIndexImpl.cpp)
 
 file(GLOB TEST test/*.cpp)
 
 add_library(Vector SHARED ${SRC_VECTOR})
 add_library(Set SHARED ${SRC_SET})
+add_library(Compact SHARED ${SRC_COMPACT})
 
 add_executable(${PROJECT_NAME}-test ${TEST})
-target_link_libraries(${PROJECT_NAME}-test Vector Set)
+target_link_libraries(${PROJECT_NAME}-test Vector Set Compact)
