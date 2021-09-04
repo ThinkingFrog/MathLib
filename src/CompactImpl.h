@@ -1,5 +1,6 @@
 #pragma once
 #include "ICompact.h"
+#include "CompactImplControlBlock.h"
 
 class LIB_EXPORT CompactImpl : public ICompact {
 public:
@@ -11,26 +12,13 @@ public:
     static ILogger* getLogger();
 
     bool isInside(IVector const * const&vec) const override;
-    /*
-    * Method creating new IVector and assigning new address to val
-    */
     RC getVectorCopy(IMultiIndex const *index, IVector *& val) const override;
-    /*
-    * Method copy data from vector in ISet to vector val
-    */
     RC getVectorCoords(IMultiIndex const *index, IVector * const& val) const override;
 
-    // левейшая по всем координатам
     RC getLeftBoundary(IVector *& vec) const override;
-    // правейшая по всем координатам
     RC getRightBoundary(IVector *& vec) const override;
     size_t getDim() const override;
     IMultiIndex* getGrid() const override;
-
-    //  grid используется для задания сетки на получившемся пересечении
-    static ICompact* createIntersection(ICompact const *op1, ICompact const *op2, IMultiIndex const* const grid, double tol);
-    /* CompactSpan - компактная оболочка: строим наименьшее компактное множество, содержащее 2 переданных */
-    static ICompact* createCompactSpan(ICompact const *op1, ICompact const *op2, IMultiIndex const* const grid);
 
     class IteratorImpl : public IIterator {
     public:
@@ -55,8 +43,11 @@ public:
         * Method copy data from vector in ISet to vector val
         */
         RC getVectorCoords(IVector * const& val) const override;
+    
     private:
-    protected:
+        bool valid;
+        IVector* vector;
+        CompactImplControlBlock* control_block;
     };
 
     IIterator* getIterator(IMultiIndex const * const&index, IMultiIndex const * const &bypassOrder) const override;
@@ -64,9 +55,16 @@ public:
     IIterator* getBegin(IMultiIndex const * const &bypassOrder) const override;
     // возвращает итератор на правейшую границу
     IIterator* getEnd(IMultiIndex const * const &bypassOrder) const override;
+    RC moveIterator(IMultiIndex * const &currentIndex, IMultiIndex const * const &bypassOrder);
+
+    ~CompactImpl();
     
 private:
-    IVector* left_boundary;
-    IVector* right_boundary;
-    IMultiIndex* node_counts;
+    static ILogger* logger;
+    const IVector* left_boundary;
+    const IVector* right_boundary;
+    const IMultiIndex* grid;
+    size_t dim;
+
+    CompactImpl(const IVector* left, const IVector* right, const IMultiIndex* nodes);
 };

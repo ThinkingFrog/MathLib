@@ -1,8 +1,10 @@
 #pragma once
 #include "ICompactControlBlock.h"
+#include "CompactImpl.h"
 
 class CompactImplControlBlock : public ICompactControlBlock {
 public:
+    CompactImplControlBlock(CompactImpl* compact);
     /*
     * Control block moves iterator forward in grid of compact. When reached last node of an axis, next axis position will be incremented. Next axis defined by bypassOrder
     * 
@@ -19,4 +21,6 @@ public:
     * @param [in] val Buffer for vector data
     */
     RC get(IMultiIndex const * const &currentIndex, IVector* const &val) const override;
+private:
+    CompactImpl* compact;
 };
