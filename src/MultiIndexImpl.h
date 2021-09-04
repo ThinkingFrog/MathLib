@@ -1,6 +1,8 @@
 #pragma once
 #include "IMultiIndex.h"
 
+#define PTR_DATA (size_t*)((u_int8_t*)(this) + sizeof(MultiIndexImpl))
+
 class LIB_EXPORT MultiIndexImpl : public IMultiIndex {
 public:
     static IMultiIndex* createMultiIndex(size_t dim, const size_t* indices);
@@ -20,5 +22,8 @@ public:
     RC incAxisIndex(size_t axisIndex, ssize_t val);
 
 private:
+    size_t dim;
+    static ILogger* logger;
 protected:
+    MultiIndexImpl(size_t dim);
 };

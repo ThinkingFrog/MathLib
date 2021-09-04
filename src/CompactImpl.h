@@ -66,5 +66,7 @@ public:
     IIterator* getEnd(IMultiIndex const * const &bypassOrder) const;
     
 private:
-protected:
+    IVector* left_boundary;
+    IVector* right_boundary;
+    IMultiIndex* node_counts;
 };
