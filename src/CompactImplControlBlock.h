@@ -10,7 +10,7 @@ public:
     *
     * @param [in] bypassOrder Multi-index, that defining bypass orred of axis
     */
-    RC get(IMultiIndex * const &currentIndex, IMultiIndex const * const &bypassOrder) const;
+    RC get(IMultiIndex * const &currentIndex, IMultiIndex const * const &bypassOrder) const override;
     /*
     * Control block clculates vector corresponding to multi-index
     * 
@@ -18,7 +18,5 @@ public:
     *
     * @param [in] val Buffer for vector data
     */
-    RC get(IMultiIndex const * const &currentIndex, IVector* const &val) const;
-private:
-protected:
+    RC get(IMultiIndex const * const &currentIndex, IVector* const &val) const override;
 };

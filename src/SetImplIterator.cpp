@@ -81,10 +81,6 @@ SetImpl::IteratorImpl::~IteratorImpl() {
 }
 ISet::IIterator::~IIterator()  = default;
 
-size_t SetImpl::IteratorImpl::getIndex() const {
-    return cur_unique_idx; 
-}
-
 ISet::IIterator* SetImpl::getIterator(size_t index) const {
     if (index > size - 1) {
         logger->severe(RC::INDEX_OUT_OF_BOUND, __FILE__, __func__, __LINE__);

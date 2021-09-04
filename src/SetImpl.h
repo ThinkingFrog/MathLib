@@ -10,48 +10,47 @@ public:
     static ILogger* getLogger();
 
     static ISet* createSet();
-    ISet* clone() const;
+    ISet* clone() const override;
 
-    size_t getDim() const;
-    size_t getSize() const;
+    size_t getDim() const override;
+    size_t getSize() const override;
 
-    RC getCopy(size_t index, IVector *& val) const;
-    RC findFirst(IVector const * const& pat, IVector::NORM n, double tol) const;
-    RC findFirstAndCopy(IVector const * const& pat, IVector::NORM n, double tol, IVector *& val) const;
+    RC getCopy(size_t index, IVector *& val) const override;
+    RC findFirst(IVector const * const& pat, IVector::NORM n, double tol) const override;
+    RC findFirstAndCopy(IVector const * const& pat, IVector::NORM n, double tol, IVector *& val) const override;
 
-    RC getCoords(size_t index, IVector * const& val) const;
-    RC findFirstAndCopyCoords(IVector const * const& pat, IVector::NORM n, double tol, IVector * const& val) const;
+    RC getCoords(size_t index, IVector * const& val) const override;
+    RC findFirstAndCopyCoords(IVector const * const& pat, IVector::NORM n, double tol, IVector * const& val) const override;
 
-    RC insert(IVector const * const& val, IVector::NORM n, double tol);
+    RC insert(IVector const * const& val, IVector::NORM n, double tol) override;
 
-    RC remove(size_t index);
-    RC remove(IVector const * const& pat, IVector::NORM n, double tol);
+    RC remove(size_t index) override;
+    RC remove(IVector const * const& pat, IVector::NORM n, double tol) override;
 
     class IteratorImpl : public IIterator {
     public:
         IteratorImpl(SetImplControlBlock* const& controlBlock, size_t index, IVector* vector);
 
-        IIterator * getNext(size_t indexInc = 1) const;
-        IIterator * getPrevious(size_t indexInc = 1) const;
-        IIterator * clone() const;
+        IIterator * getNext(size_t indexInc = 1) const override;
+        IIterator * getPrevious(size_t indexInc = 1) const override;
+        IIterator * clone() const override;
 
         static RC setLogger(ILogger * const pLogger);
 
-        RC next(size_t indexInc = 1);
-        RC previous(size_t indexInc = 1);
+        RC next(size_t indexInc = 1) override;
+        RC previous(size_t indexInc = 1) override;
         
-        bool isValid() const;
+        bool isValid() const override;
 
-        RC makeBegin();
-        RC makeEnd();
+        RC makeBegin() override;
+        RC makeEnd() override;
 
-        RC getVectorCopy(IVector *& val) const;
-        RC getVectorCoords(IVector * const& val) const;
+        RC getVectorCopy(IVector *& val) const override;
+        RC getVectorCoords(IVector * const& val) const override;
 
         ~IteratorImpl();
 
     protected:
-        size_t getIndex() const;
         IteratorImpl();
     private:
         size_t cur_unique_idx;
@@ -61,9 +60,9 @@ public:
         bool valid;
     };
 
-    IIterator *getIterator(size_t index) const;
-    IIterator *getBegin() const;
-    IIterator *getEnd() const;
+    IIterator *getIterator(size_t index) const override;
+    IIterator *getBegin() const override;
+    IIterator *getEnd() const override;
     
     ~SetImpl();
 
