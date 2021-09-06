@@ -152,6 +152,7 @@ void SetTest::testClone() {
     err = set1->insert(vec1, DEFAULT_NORM, TOLERANCE);
     assert(err == RC::SUCCESS);
     ISet* set2 = set1->clone();
+    assert(ISet::equals(set1, set2, DEFAULT_NORM, TOLERANCE));
 
     delete set2;
 
