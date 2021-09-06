@@ -1,3 +1,4 @@
+#include <cmath>
 #include "CompactImpl.h"
 
 
@@ -160,7 +161,25 @@ RC CompactImpl::moveIterator(IMultiIndex * const &currentIndex, IMultiIndex cons
 }
 
 ICompact* ICompact::createIntersection(ICompact const *op1, ICompact const *op2, IMultiIndex const* const grid, double tol) {
-    return nullptr;
+    if (op1 == nullptr || op2 == nullptr || grid == nullptr) {
+        getLogger()->severe(RC::NULLPTR_ERROR, __FILE__, __func__, __LINE__);
+        return nullptr;
+    }
+    if (std::isnan(tol) || std::isinf(tol)) {
+        getLogger()->severe(RC::NOT_NUMBER, __FILE__, __func__, __LINE__);
+        return nullptr;
+    }
+    if (op1->getDim() != op2->getDim() || op1->getDim() != grid->getDim()) {
+        getLogger()->severe(RC::MISMATCHING_DIMENSIONS, __FILE__, __func__, __LINE__);
+        return nullptr;
+    }
+
+    IVector* com1_left_bound, *com1_right_bound, *com2_left_bound, *com2_right_bound;
+    RC err = op1->getLeftBoundary(com1_left_bound);
+    if (err != RC::SUCCESS) {
+        getLogger()->severe(err, __FILE__, __func__, __LINE__);
+        return nullptr;
+    }
 }
 
 ICompact* ICompact::createCompactSpan(ICompact const *op1, ICompact const *op2, IMultiIndex const* const grid) {
