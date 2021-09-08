@@ -1,14 +1,13 @@
-#include <array>
-#include <memory>
-#include <iostream>
-#include <cassert>
 #include "tests.hpp"
-
+#include <array>
+#include <cassert>
+#include <iostream>
+#include <memory>
 
 void SetTest::testCreate() {
     CREATE_LOGGER
     CREATE_SET_ONE
-    
+
     assert(set1 != nullptr);
 
     CLEAR_SET_ONE
@@ -37,8 +36,8 @@ void SetTest::testGetCopy() {
     CREATE_ALL
 
     RC err;
-    IVector* tmp;
-    
+    IVector *tmp;
+
     err = set1->insert(vec1, DEFAULT_NORM, TOLERANCE);
     assert(err == RC::SUCCESS);
     err = set1->insert(vec2, DEFAULT_NORM, TOLERANCE);
@@ -48,7 +47,7 @@ void SetTest::testGetCopy() {
     assert(err == RC::SUCCESS);
     assert(IVector::equals(vec1, tmp, DEFAULT_NORM, TOLERANCE));
     delete tmp;
-    
+
     err = set1->getCopy(1, tmp);
     assert(err == RC::SUCCESS);
     assert(IVector::equals(vec2, tmp, DEFAULT_NORM, TOLERANCE));
@@ -63,7 +62,7 @@ void SetTest::testGetCoords() {
 
     err = set1->insert(vec1, DEFAULT_NORM, TOLERANCE);
     assert(err == RC::SUCCESS);
-    
+
     err = set1->getCoords(0, vec2);
     assert(err == RC::SUCCESS);
     assert(IVector::equals(vec1, vec2, DEFAULT_NORM, TOLERANCE));
@@ -151,7 +150,7 @@ void SetTest::testClone() {
 
     err = set1->insert(vec1, DEFAULT_NORM, TOLERANCE);
     assert(err == RC::SUCCESS);
-    ISet* set2 = set1->clone();
+    ISet *set2 = set1->clone();
     assert(ISet::equals(set1, set2, DEFAULT_NORM, TOLERANCE));
 
     delete set2;
@@ -192,7 +191,7 @@ void SetTest::testFindFirst() {
 void SetTest::testFindFirstAndCopy() {
     CREATE_ALL
 
-    IVector* test;
+    IVector *test;
     RC err;
 
     err = set1->insert(vec1, DEFAULT_NORM, TOLERANCE);
@@ -238,11 +237,11 @@ void SetTest::testMakeIntersection() {
     err = set3->insert(vec2, DEFAULT_NORM, TOLERANCE);
     assert(err == RC::SUCCESS);
 
-    ISet* setInter1 = ISet::makeIntersection(set3, set1, DEFAULT_NORM, TOLERANCE);
+    ISet *setInter1 = ISet::makeIntersection(set3, set1, DEFAULT_NORM, TOLERANCE);
     assert(ISet::equals(setInter1, set1, DEFAULT_NORM, TOLERANCE));
 
-    ISet* setInter2 = ISet::makeIntersection(set1, set2, DEFAULT_NORM, TOLERANCE);
-    ISet* emptySet = ISet::createSet();
+    ISet *setInter2 = ISet::makeIntersection(set1, set2, DEFAULT_NORM, TOLERANCE);
+    ISet *emptySet = ISet::createSet();
     assert(ISet::equals(setInter2, emptySet, DEFAULT_NORM, TOLERANCE));
 
     delete setInter1;
@@ -266,7 +265,7 @@ void SetTest::testMakeUnion() {
     err = set3->insert(vec2, DEFAULT_NORM, TOLERANCE);
     assert(err == RC::SUCCESS);
 
-    ISet* setUnion = ISet::makeUnion(set1, set2, DEFAULT_NORM, TOLERANCE);
+    ISet *setUnion = ISet::makeUnion(set1, set2, DEFAULT_NORM, TOLERANCE);
     assert(ISet::equals(setUnion, set3, DEFAULT_NORM, TOLERANCE));
 
     delete setUnion;
@@ -288,10 +287,10 @@ void SetTest::testSub() {
     err = set3->insert(vec2, DEFAULT_NORM, TOLERANCE);
     assert(err == RC::SUCCESS);
 
-    ISet* sub1 = ISet::sub(set3, set1, DEFAULT_NORM, TOLERANCE);
+    ISet *sub1 = ISet::sub(set3, set1, DEFAULT_NORM, TOLERANCE);
     assert(ISet::equals(sub1, set2, DEFAULT_NORM, TOLERANCE));
-    
-    ISet* sub2 = ISet::sub(set3, set2, DEFAULT_NORM, TOLERANCE);
+
+    ISet *sub2 = ISet::sub(set3, set2, DEFAULT_NORM, TOLERANCE);
     assert(ISet::equals(sub2, set1, DEFAULT_NORM, TOLERANCE));
 
     delete sub1;
@@ -318,7 +317,7 @@ void SetTest::testSymSub() {
     err = set3->insert(vec4, DEFAULT_NORM, TOLERANCE);
     assert(err == RC::SUCCESS);
 
-    ISet* symSub = ISet::symSub(set1, set2, DEFAULT_NORM, TOLERANCE);
+    ISet *symSub = ISet::symSub(set1, set2, DEFAULT_NORM, TOLERANCE);
     assert(ISet::equals(symSub, set3, DEFAULT_NORM, TOLERANCE));
 
     delete symSub;

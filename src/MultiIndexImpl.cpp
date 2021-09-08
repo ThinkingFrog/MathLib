@@ -1,58 +1,49 @@
-#include <new>
-#include <cstring>
-#include <cmath>
 #include "MultiIndexImpl.h"
+#include <cmath>
+#include <cstring>
+#include <new>
 
+ILogger *MultiIndexImpl::logger = nullptr;
 
-ILogger* MultiIndexImpl::logger = nullptr;
-
-RC MultiIndexImpl::setLogger(ILogger* const pLogger) {
+RC MultiIndexImpl::setLogger(ILogger *const pLogger) {
     if (pLogger == nullptr)
         return RC::NULLPTR_ERROR;
-    
+
     logger = pLogger;
     return RC::SUCCESS;
 }
-ILogger* MultiIndexImpl::getLogger() {
-    return logger;
-}
+ILogger *MultiIndexImpl::getLogger() { return logger; }
 
 MultiIndexImpl::MultiIndexImpl(size_t dim) : dim(dim) {}
 
-IMultiIndex* MultiIndexImpl::createMultiIndex(size_t dim, const size_t* indices) {
-        if (dim == 0) {
-            logger->severe(RC::INVALID_ARGUMENT, __FILE__, __func__, __LINE__);
-            return nullptr;
-        }
-        if (indices == nullptr) {
-            logger->warning(RC::NULLPTR_ERROR, __FILE__, __func__, __LINE__);
-            return nullptr;
-        }
-        
-        u_int8_t* ptr = new (std::nothrow) u_int8_t[sizeof(MultiIndexImpl) + dim * sizeof(size_t)];
-        if (ptr == nullptr) {
-            logger->warning(RC::ALLOCATION_ERROR, __FILE__, __func__, __LINE__);
-            return nullptr;
-        }
-        IMultiIndex* multi_ind = new (ptr) MultiIndexImpl(dim);
-        std::memcpy((u_int8_t*)(ptr) + sizeof(MultiIndexImpl), indices, dim * sizeof(double));
+IMultiIndex *MultiIndexImpl::createMultiIndex(size_t dim, const size_t *indices) {
+    if (dim == 0) {
+        logger->severe(RC::INVALID_ARGUMENT, __FILE__, __func__, __LINE__);
+        return nullptr;
+    }
+    if (indices == nullptr) {
+        logger->warning(RC::NULLPTR_ERROR, __FILE__, __func__, __LINE__);
+        return nullptr;
+    }
 
-        return multi_ind;
+    u_int8_t *ptr = new (std::nothrow) u_int8_t[sizeof(MultiIndexImpl) + dim * sizeof(size_t)];
+    if (ptr == nullptr) {
+        logger->warning(RC::ALLOCATION_ERROR, __FILE__, __func__, __LINE__);
+        return nullptr;
+    }
+    IMultiIndex *multi_ind = new (ptr) MultiIndexImpl(dim);
+    std::memcpy((u_int8_t *)(ptr) + sizeof(MultiIndexImpl), indices, dim * sizeof(double));
+
+    return multi_ind;
 }
 
-IMultiIndex* MultiIndexImpl::clone() const {
-    return createMultiIndex(dim, PTR_DATA);
-}
+IMultiIndex *MultiIndexImpl::clone() const { return createMultiIndex(dim, PTR_DATA); }
 
-size_t const* MultiIndexImpl::getData() const {
-    return PTR_DATA;
-}
+size_t const *MultiIndexImpl::getData() const { return PTR_DATA; }
 
-size_t MultiIndexImpl::getDim() const {
-    return dim;
-}
+size_t MultiIndexImpl::getDim() const { return dim; }
 
-RC MultiIndexImpl::setData(size_t dim, size_t const* const& ptr_data) {
+RC MultiIndexImpl::setData(size_t dim, size_t const *const &ptr_data) {
     if (this->dim != dim) {
         logger->severe(RC::MISMATCHING_DIMENSIONS, __FILE__, __func__, __LINE__);
         return RC::MISMATCHING_DIMENSIONS;
@@ -72,12 +63,12 @@ RC MultiIndexImpl::setData(size_t dim, size_t const* const& ptr_data) {
     return RC::SUCCESS;
 }
 
-RC MultiIndexImpl::getAxisIndex(size_t index, size_t& val) const {
+RC MultiIndexImpl::getAxisIndex(size_t index, size_t &val) const {
     if (index >= dim) {
         logger->severe(RC::INDEX_OUT_OF_BOUND, __FILE__, __func__, __LINE__);
         return RC::INDEX_OUT_OF_BOUND;
     }
-    
+
     val = *(PTR_DATA + index);
     return RC::SUCCESS;
 }
@@ -87,7 +78,7 @@ RC MultiIndexImpl::setAxisIndex(size_t index, size_t val) {
         logger->severe(RC::INDEX_OUT_OF_BOUND, __FILE__, __func__, __LINE__);
         return RC::INDEX_OUT_OF_BOUND;
     }
-    
+
     *(PTR_DATA + index) = val;
     return RC::SUCCESS;
 }
@@ -97,20 +88,16 @@ RC MultiIndexImpl::incAxisIndex(size_t index, ssize_t val) {
         logger->severe(RC::INDEX_OUT_OF_BOUND, __FILE__, __func__, __LINE__);
         return RC::INDEX_OUT_OF_BOUND;
     }
-    
+
     *(PTR_DATA + index) += val;
     return RC::SUCCESS;
 }
 
-IMultiIndex* IMultiIndex::createMultiIndex(size_t dim, const size_t* indices) {
+IMultiIndex *IMultiIndex::createMultiIndex(size_t dim, const size_t *indices) {
     return MultiIndexImpl::createMultiIndex(dim, indices);
 }
 
-RC IMultiIndex::setLogger(ILogger * const pLogger) {
-    return MultiIndexImpl::setLogger(pLogger);
-}
-ILogger* IMultiIndex::getLogger() {
-    return MultiIndexImpl::getLogger();
-}
+RC IMultiIndex::setLogger(ILogger *const pLogger) { return MultiIndexImpl::setLogger(pLogger); }
+ILogger *IMultiIndex::getLogger() { return MultiIndexImpl::getLogger(); }
 
 IMultiIndex::~IMultiIndex() = default;

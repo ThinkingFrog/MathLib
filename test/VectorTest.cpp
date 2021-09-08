@@ -1,18 +1,17 @@
+#include "tests.hpp"
 #include <array>
-#include <memory>
-#include <iostream>
 #include <cassert>
 #include <cmath>
-#include "tests.hpp"
-
+#include <iostream>
+#include <memory>
 
 void VecTest::testCreate() {
     CREATE_LOGGER
     CREATE_VEC_ONE
-    
+
     assert(vec1 != nullptr);
 
-    IVector* tmp = IVector::createVector(1, nullptr);
+    IVector *tmp = IVector::createVector(1, nullptr);
     assert(tmp == nullptr);
 
     delete tmp;
@@ -24,13 +23,13 @@ void VecTest::testCopy() {
     CREATE_LOGGER
     CREATE_VEC_ONE
     CREATE_VEC_TWO
-    
+
     if (IVector::copyInstance(vec2, vec1) != RC::SUCCESS)
         return;
 
     for (size_t idx = 0; idx < data1.size(); ++idx)
         assert(vec1->getData()[idx] == vec2->getData()[idx]);
-    
+
     CLEAR_LOGGER
     CLEAR_VEC_ONE
     CLEAR_VEC_TWO
@@ -56,7 +55,7 @@ void VecTest::testClone() {
     CREATE_VEC_ONE
 
     std::unique_ptr<IVector> vec2 = std::unique_ptr<IVector>(vec1->clone());
-    
+
     for (size_t idx = 0; idx < data1.size(); ++idx)
         assert(vec1->getData()[idx] == vec2->getData()[idx]);
 
@@ -66,7 +65,7 @@ void VecTest::testClone() {
 void VecTest::testGetData() {
     CREATE_LOGGER
     CREATE_VEC_ONE
-    
+
     for (size_t idx = 0; idx < data1.size(); ++idx)
         assert(vec1->getData()[idx] == data1[idx]);
 
@@ -77,9 +76,9 @@ void VecTest::testSetData() {
     CREATE_LOGGER
     CREATE_VEC_ONE
     CREATE_VEC_TWO
-    
+
     vec1->setData(data2.size(), data2.data());
-    
+
     for (size_t idx = 0; idx < data2.size(); ++idx)
         assert(vec1->getData()[idx] == data2[idx]);
 
@@ -125,7 +124,7 @@ void VecTest::testGetDim() {
     CREATE_VEC_ONE
 
     assert(vec1->getDim() == 4);
-    
+
     CLEAR_LOGGER
     CLEAR_VEC_ONE
 }
@@ -162,7 +161,7 @@ void VecTest::testAdd() {
     CREATE_VEC_ONE
     CREATE_VEC_TWO
 
-    IVector* vec3 = IVector::add(vec1, vec2);
+    IVector *vec3 = IVector::add(vec1, vec2);
     for (size_t idx = 0; idx < data1.size(); ++idx)
         assert(vec3->getData()[idx] == data1[idx] + data2[idx]);
 
@@ -172,11 +171,11 @@ void VecTest::testAdd() {
     CLEAR_VEC_TWO
 }
 void VecTest::testSub() {
-        CREATE_LOGGER
+    CREATE_LOGGER
     CREATE_VEC_ONE
     CREATE_VEC_TWO
 
-    IVector* vec3 = IVector::sub(vec1, vec2);
+    IVector *vec3 = IVector::sub(vec1, vec2);
     for (size_t idx = 0; idx < data1.size(); ++idx)
         assert(vec3->getData()[idx] == data1[idx] - data2[idx]);
 
@@ -201,7 +200,7 @@ void VecTest::testEquals() {
     CREATE_LOGGER
     CREATE_VEC_ONE
 
-    IVector* vec2 = vec1->clone();
+    IVector *vec2 = vec1->clone();
     assert(IVector::equals(vec1, vec2, IVector::NORM::FIRST, TOLERANCE));
 
     delete vec2;
@@ -241,7 +240,7 @@ void VecTest::testApplyFunc() {
     CREATE_LOGGER
     CREATE_VEC_ONE
 
-    vec1->applyFunction([](double val){ return val + 1; });
+    vec1->applyFunction([](double val) { return val + 1; });
     for (size_t idx = 0; idx < data1.size(); ++idx)
         assert(vec1->getData()[idx] == data1[idx] + 1);
 
@@ -252,7 +251,7 @@ void VecTest::testForeach() {
     CREATE_LOGGER
     CREATE_VEC_ONE
 
-    vec1->foreach([](double val){ return; });
+    vec1->foreach ([](double val) { return; });
     for (size_t idx = 0; idx < data1.size(); ++idx)
         assert(vec1->getData()[idx] == data1[idx]);
 
@@ -284,6 +283,6 @@ void VecTest::testAll() {
     testChebyshevNorm();
     testApplyFunc();
     testForeach();
-    
+
     std::cout << "Successfully ran all Vector tests" << std::endl;
 }

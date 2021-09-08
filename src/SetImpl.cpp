@@ -1,32 +1,30 @@
+#include "SetImpl.h"
+#include "SetImplControlBlock.h"
 #include <cmath>
 #include <map>
 #include <vector>
-#include "SetImplControlBlock.h"
-#include "SetImpl.h"
 
-ILogger* SetImpl::logger = nullptr;
-ILogger* SetImpl::IteratorImpl::logger = nullptr;
+ILogger *SetImpl::logger = nullptr;
+ILogger *SetImpl::IteratorImpl::logger = nullptr;
 
-RC SetImpl::setLogger(ILogger* const pLogger) {
+RC SetImpl::setLogger(ILogger *const pLogger) {
     if (pLogger == nullptr)
         return RC::NULLPTR_ERROR;
-    
+
     logger = pLogger;
     return RC::SUCCESS;
 }
-ILogger* SetImpl::getLogger() {
-    return logger;
-}
+ILogger *SetImpl::getLogger() { return logger; }
 
-ISet* SetImpl::createSet() { return new (std::nothrow) SetImpl; }
-ISet* SetImpl::clone() const {
-    return new (std::nothrow) SetImpl(data, size, dim, unique_idxs_to_order, order_idxs_to_unique, last_vec_idx); 
+ISet *SetImpl::createSet() { return new (std::nothrow) SetImpl; }
+ISet *SetImpl::clone() const {
+    return new (std::nothrow) SetImpl(data, size, dim, unique_idxs_to_order, order_idxs_to_unique, last_vec_idx);
 }
 
 size_t SetImpl::getDim() const { return dim; }
 size_t SetImpl::getSize() const { return size; }
 
-RC SetImpl::getCopy(size_t index, IVector *& val) const {
+RC SetImpl::getCopy(size_t index, IVector *&val) const {
     if (size == 0) {
         logger->warning(RC::SOURCE_SET_EMPTY, __FILE__, __func__, __LINE__);
         return RC::SOURCE_SET_EMPTY;
@@ -36,7 +34,7 @@ RC SetImpl::getCopy(size_t index, IVector *& val) const {
         return RC::INDEX_OUT_OF_BOUND;
     }
 
-    double* buffer = new double[dim];
+    double *buffer = new double[dim];
     for (size_t idx = 0; idx < dim; ++idx)
         buffer[idx] = data[index * dim + idx];
     val = IVector::createVector(dim, buffer);
@@ -44,7 +42,7 @@ RC SetImpl::getCopy(size_t index, IVector *& val) const {
 
     return RC::SUCCESS;
 }
-RC SetImpl::findFirst(IVector const * const& pat, IVector::NORM n, double tol) const {
+RC SetImpl::findFirst(IVector const *const &pat, IVector::NORM n, double tol) const {
     if (pat == nullptr) {
         logger->severe(RC::NULLPTR_ERROR, __FILE__, __func__, __LINE__);
         return RC::NULLPTR_ERROR;
@@ -55,7 +53,7 @@ RC SetImpl::findFirst(IVector const * const& pat, IVector::NORM n, double tol) c
     }
     if (n == IVector::NORM::AMOUNT || tol < 0) {
         logger->severe(RC::INVALID_ARGUMENT, __FILE__, __func__, __LINE__);
-        return RC::INVALID_ARGUMENT;    
+        return RC::INVALID_ARGUMENT;
     }
     if (std::isnan(tol)) {
         logger->severe(RC::NOT_NUMBER, __FILE__, __func__, __LINE__);
@@ -68,15 +66,15 @@ RC SetImpl::findFirst(IVector const * const& pat, IVector::NORM n, double tol) c
 
     for (size_t vec_idx = 0; vec_idx < size; ++vec_idx) {
         bool found = false;
-        double* cur_data = new double[dim];
-        
+        double *cur_data = new double[dim];
+
         for (size_t idx = 0; idx < dim; ++idx)
             cur_data[idx] = data[vec_idx * dim + idx];
-        IVector* cur_vec = IVector::createVector(dim, cur_data);
-        
+        IVector *cur_vec = IVector::createVector(dim, cur_data);
+
         if (IVector::equals(pat, cur_vec, n, tol))
             found = true;
-        
+
         delete[] cur_data;
         delete cur_vec;
         if (found)
@@ -84,7 +82,7 @@ RC SetImpl::findFirst(IVector const * const& pat, IVector::NORM n, double tol) c
     }
     return RC::VECTOR_NOT_FOUND;
 }
-RC SetImpl::findFirstAndCopy(IVector const * const& pat, IVector::NORM n, double tol, IVector *& val) const { 
+RC SetImpl::findFirstAndCopy(IVector const *const &pat, IVector::NORM n, double tol, IVector *&val) const {
     if (pat == nullptr) {
         logger->severe(RC::NULLPTR_ERROR, __FILE__, __func__, __LINE__);
         return RC::NULLPTR_ERROR;
@@ -95,7 +93,7 @@ RC SetImpl::findFirstAndCopy(IVector const * const& pat, IVector::NORM n, double
     }
     if (n == IVector::NORM::AMOUNT || tol < 0) {
         logger->severe(RC::INVALID_ARGUMENT, __FILE__, __func__, __LINE__);
-        return RC::INVALID_ARGUMENT;    
+        return RC::INVALID_ARGUMENT;
     }
     if (std::isnan(tol)) {
         logger->severe(RC::NOT_NUMBER, __FILE__, __func__, __LINE__);
@@ -108,15 +106,15 @@ RC SetImpl::findFirstAndCopy(IVector const * const& pat, IVector::NORM n, double
 
     for (size_t vec_idx = 0; vec_idx < size; ++vec_idx) {
         bool found = false;
-        double* cur_data = new double[dim];
-        
+        double *cur_data = new double[dim];
+
         for (size_t idx = 0; idx < dim; ++idx)
             cur_data[idx] = data[vec_idx * dim + idx];
-        IVector* cur_vec = IVector::createVector(dim, cur_data);
-        
+        IVector *cur_vec = IVector::createVector(dim, cur_data);
+
         if (IVector::equals(pat, cur_vec, n, tol))
             found = true;
-        
+
         delete[] cur_data;
         if (found) {
             val = cur_vec;
@@ -128,7 +126,7 @@ RC SetImpl::findFirstAndCopy(IVector const * const& pat, IVector::NORM n, double
     return RC::VECTOR_NOT_FOUND;
 }
 
-RC SetImpl::getCoords(size_t index, IVector * const& val) const {
+RC SetImpl::getCoords(size_t index, IVector *const &val) const {
     if (size == 0) {
         logger->warning(RC::SOURCE_SET_EMPTY, __FILE__, __func__, __LINE__);
         return RC::SOURCE_SET_EMPTY;
@@ -142,7 +140,7 @@ RC SetImpl::getCoords(size_t index, IVector * const& val) const {
         return RC::NULLPTR_ERROR;
     }
 
-    double* buffer = new double[dim];
+    double *buffer = new double[dim];
     for (size_t idx = 0; idx < dim; ++idx)
         buffer[idx] = data[index * dim + idx];
     RC err = val->setData(dim, buffer);
@@ -150,7 +148,7 @@ RC SetImpl::getCoords(size_t index, IVector * const& val) const {
 
     return err;
 }
-RC SetImpl::findFirstAndCopyCoords(IVector const * const& pat, IVector::NORM n, double tol, IVector * const& val) const { 
+RC SetImpl::findFirstAndCopyCoords(IVector const *const &pat, IVector::NORM n, double tol, IVector *const &val) const {
     if (pat == nullptr) {
         logger->severe(RC::NULLPTR_ERROR, __FILE__, __func__, __LINE__);
         return RC::NULLPTR_ERROR;
@@ -161,7 +159,7 @@ RC SetImpl::findFirstAndCopyCoords(IVector const * const& pat, IVector::NORM n, 
     }
     if (n == IVector::NORM::AMOUNT || tol < 0) {
         logger->severe(RC::INVALID_ARGUMENT, __FILE__, __func__, __LINE__);
-        return RC::INVALID_ARGUMENT;    
+        return RC::INVALID_ARGUMENT;
     }
     if (std::isnan(tol)) {
         logger->severe(RC::NOT_NUMBER, __FILE__, __func__, __LINE__);
@@ -174,15 +172,15 @@ RC SetImpl::findFirstAndCopyCoords(IVector const * const& pat, IVector::NORM n, 
 
     for (size_t vec_idx = 0; vec_idx < size; ++vec_idx) {
         bool found = false;
-        double* cur_data = new double[dim];
-        
+        double *cur_data = new double[dim];
+
         for (size_t idx = 0; idx < dim; ++idx)
             cur_data[idx] = data[vec_idx * dim + idx];
-        IVector* cur_vec = IVector::createVector(dim, cur_data);
-        
+        IVector *cur_vec = IVector::createVector(dim, cur_data);
+
         if (IVector::equals(pat, cur_vec, n, tol))
             found = true;
-        
+
         delete cur_vec;
         if (found) {
             RC err = val->setData(dim, cur_data);
@@ -194,7 +192,7 @@ RC SetImpl::findFirstAndCopyCoords(IVector const * const& pat, IVector::NORM n, 
     return RC::VECTOR_NOT_FOUND;
 }
 
-RC SetImpl::insert(IVector const * const& val, IVector::NORM n, double tol) {
+RC SetImpl::insert(IVector const *const &val, IVector::NORM n, double tol) {
     if (dim == 0)
         dim = val->getDim();
     else if (dim != val->getDim()) {
@@ -204,13 +202,13 @@ RC SetImpl::insert(IVector const * const& val, IVector::NORM n, double tol) {
     if (size == 0)
         last_vec_idx = 0;
 
-    const double* vec_data = val->getData();
+    const double *vec_data = val->getData();
 
     for (size_t vec_idx = 0; vec_idx < size; ++vec_idx) {
-        double* sub = new double[dim];
+        double *sub = new double[dim];
         for (size_t idx = 0; idx < dim; ++idx)
             sub[idx] = fabs(vec_data[idx] - data[vec_idx * dim + idx]);
-        IVector* tmp = IVector::createVector(dim, sub);
+        IVector *tmp = IVector::createVector(dim, sub);
         if (tmp->norm(n) <= tol) {
             delete[] sub;
             delete tmp;
@@ -226,18 +224,18 @@ RC SetImpl::insert(IVector const * const& val, IVector::NORM n, double tol) {
         double *tmp = new double[capacity];
         for (size_t idx = 0; idx < size * dim; ++idx)
             tmp[idx] = data[idx];
-        delete [] data;
+        delete[] data;
         data = tmp;
     }
 
     for (size_t idx = 0; idx < dim; ++idx)
         data[size * dim + idx] = vec_data[idx];
-    
+
     unique_idxs_to_order.insert(std::pair<size_t, size_t>(last_vec_idx, size));
     order_idxs_to_unique.insert(std::pair<size_t, size_t>(size, last_vec_idx));
     ++size;
     ++last_vec_idx;
-    
+
     return RC::SUCCESS;
 }
 
@@ -251,7 +249,7 @@ RC SetImpl::remove(size_t index) {
         return RC::INDEX_OUT_OF_BOUND;
     }
 
-    double* new_data = new double[capacity];
+    double *new_data = new double[capacity];
     std::map<size_t, size_t> new_unique_idxs_to_order;
     std::map<size_t, size_t> new_order_idxs_to_unique;
 
@@ -270,10 +268,10 @@ RC SetImpl::remove(size_t index) {
     unique_idxs_to_order = new_unique_idxs_to_order;
     order_idxs_to_unique = new_order_idxs_to_unique;
     --size;
-    
-    return RC::SUCCESS; 
+
+    return RC::SUCCESS;
 }
-RC SetImpl::remove(IVector const * const& pat, IVector::NORM n, double tol) { 
+RC SetImpl::remove(IVector const *const &pat, IVector::NORM n, double tol) {
     if (size == 0) {
         logger->warning(RC::SOURCE_SET_EMPTY, __FILE__, __func__, __LINE__);
         return RC::SOURCE_SET_EMPTY;
@@ -288,7 +286,7 @@ RC SetImpl::remove(IVector const * const& pat, IVector::NORM n, double tol) {
     }
     if (n == IVector::NORM::AMOUNT || tol < 0) {
         logger->severe(RC::INVALID_ARGUMENT, __FILE__, __func__, __LINE__);
-        return RC::INVALID_ARGUMENT;    
+        return RC::INVALID_ARGUMENT;
     }
     if (std::isnan(tol)) {
         logger->severe(RC::NOT_NUMBER, __FILE__, __func__, __LINE__);
@@ -299,18 +297,18 @@ RC SetImpl::remove(IVector const * const& pat, IVector::NORM n, double tol) {
         return RC::INFINITY_OVERFLOW;
     }
 
-    double* new_data = new double[capacity];
+    double *new_data = new double[capacity];
     std::vector<size_t> removed_idxs;
     std::map<size_t, size_t> new_unique_idxs_to_order;
     std::map<size_t, size_t> new_order_idxs_to_unique;
 
     for (size_t vec_idx = 0, new_idx = 0, new_vec_idx = 0; vec_idx < size; ++vec_idx) {
-        double* cur_data = new double[dim];
-        
+        double *cur_data = new double[dim];
+
         for (size_t idx = 0; idx < dim; ++idx)
             cur_data[idx] = data[vec_idx * dim + idx];
-        IVector* cur_vec = IVector::createVector(dim, cur_data);
-        
+        IVector *cur_vec = IVector::createVector(dim, cur_data);
+
         if (!IVector::equals(pat, cur_vec, n, tol)) {
             new_unique_idxs_to_order.insert(std::pair<size_t, size_t>(order_idxs_to_unique.at(vec_idx), new_vec_idx));
             new_order_idxs_to_unique.insert(std::pair<size_t, size_t>(new_vec_idx, unique_idxs_to_order.at(vec_idx)));
@@ -328,8 +326,8 @@ RC SetImpl::remove(IVector const * const& pat, IVector::NORM n, double tol) {
     unique_idxs_to_order = new_unique_idxs_to_order;
     order_idxs_to_unique = new_order_idxs_to_unique;
     --size;
-    
-    return RC::SUCCESS; 
+
+    return RC::SUCCESS;
 }
 
 SetImpl::~SetImpl() {
@@ -342,19 +340,21 @@ SetImpl::SetImpl() {
 
     capacity = 100;
     data = new double[capacity];
-    
+
     size = 0;
     dim = 0;
     last_vec_idx = 0;
 }
-SetImpl::SetImpl(double const* const& other_data, size_t other_size, size_t other_dim, const std::map<size_t, size_t>& other_unique_map, const std::map<size_t, size_t>& other_order_map, size_t other_last_idx) { 
+SetImpl::SetImpl(double const *const &other_data, size_t other_size, size_t other_dim,
+                 const std::map<size_t, size_t> &other_unique_map, const std::map<size_t, size_t> &other_order_map,
+                 size_t other_last_idx) {
     control_block = SetImplControlBlock::createControlBlock(this);
-    
+
     capacity = other_size * other_dim;
     data = new double[capacity];
     for (size_t idx = 0; idx < other_size * other_dim; ++idx)
         data[idx] = other_data[idx];
-    
+
     size = other_size;
     dim = other_dim;
     last_vec_idx = other_last_idx;
@@ -363,30 +363,24 @@ SetImpl::SetImpl(double const* const& other_data, size_t other_size, size_t othe
     order_idxs_to_unique = other_order_map;
 }
 
-RC ISet::setLogger(ILogger* const logger) {
-    return SetImpl::setLogger(logger);
-}
-ILogger* ISet::getLogger() {
-    return SetImpl::getLogger();
-}
-ISet* ISet::createSet() {
-    return SetImpl::createSet();
-}
-ISet* ISet::makeIntersection(ISet const * const& op1, ISet const * const& op2, IVector::NORM n, double tol) {
+RC ISet::setLogger(ILogger *const logger) { return SetImpl::setLogger(logger); }
+ILogger *ISet::getLogger() { return SetImpl::getLogger(); }
+ISet *ISet::createSet() { return SetImpl::createSet(); }
+ISet *ISet::makeIntersection(ISet const *const &op1, ISet const *const &op2, IVector::NORM n, double tol) {
     if (op1->getDim() != op2->getDim()) {
         getLogger()->severe(RC::MISMATCHING_DIMENSIONS, __FILE__, __func__, __LINE__);
         return nullptr;
     }
 
     size_t dim = op1->getDim();
-    ISet* new_set = ISet::createSet();
+    ISet *new_set = ISet::createSet();
 
-    IIterator* set1_iter = op1->getBegin();
+    IIterator *set1_iter = op1->getBegin();
     for (; set1_iter->isValid(); set1_iter->next()) {
-        double* empty_data = new double[dim];
-        IVector* tmp_vec = IVector::createVector(dim, empty_data);
+        double *empty_data = new double[dim];
+        IVector *tmp_vec = IVector::createVector(dim, empty_data);
         delete[] empty_data;
-        
+
         RC err = set1_iter->getVectorCoords(tmp_vec);
         if (err != RC::SUCCESS) {
             delete tmp_vec;
@@ -395,13 +389,12 @@ ISet* ISet::makeIntersection(ISet const * const& op1, ISet const * const& op2, I
             getLogger()->severe(err, __FILE__, __func__, __LINE__);
             return nullptr;
         }
-        
+
         err = op2->findFirst(tmp_vec, n, tol);
         if (err == RC::VECTOR_NOT_FOUND) {
             delete tmp_vec;
             continue;
-        }
-        else if (err != RC::SUCCESS) {
+        } else if (err != RC::SUCCESS) {
             delete tmp_vec;
             delete new_set;
             delete set1_iter;
@@ -415,12 +408,12 @@ ISet* ISet::makeIntersection(ISet const * const& op1, ISet const * const& op2, I
     }
     delete set1_iter;
 
-    IIterator* set2_iter = op2->getBegin();
+    IIterator *set2_iter = op2->getBegin();
     for (; set2_iter->isValid(); set2_iter->next()) {
-        double* empty_data = new double[dim];
-        IVector* tmp_vec = IVector::createVector(dim, empty_data);
+        double *empty_data = new double[dim];
+        IVector *tmp_vec = IVector::createVector(dim, empty_data);
         delete[] empty_data;
-        
+
         RC err = set2_iter->getVectorCoords(tmp_vec);
         if (err != RC::SUCCESS) {
             delete tmp_vec;
@@ -429,13 +422,12 @@ ISet* ISet::makeIntersection(ISet const * const& op1, ISet const * const& op2, I
             getLogger()->severe(err, __FILE__, __func__, __LINE__);
             return nullptr;
         }
-        
+
         err = op1->findFirst(tmp_vec, n, tol);
         if (err == RC::VECTOR_NOT_FOUND) {
             delete tmp_vec;
             continue;
-        }
-        else if (err != RC::SUCCESS) {
+        } else if (err != RC::SUCCESS) {
             delete tmp_vec;
             delete new_set;
             delete set2_iter;
@@ -451,21 +443,21 @@ ISet* ISet::makeIntersection(ISet const * const& op1, ISet const * const& op2, I
 
     return new_set;
 }
-ISet* ISet::makeUnion(ISet const * const& op1, ISet const * const& op2, IVector::NORM n, double tol) {
+ISet *ISet::makeUnion(ISet const *const &op1, ISet const *const &op2, IVector::NORM n, double tol) {
     if (op1->getDim() != op2->getDim()) {
         getLogger()->severe(RC::MISMATCHING_DIMENSIONS, __FILE__, __func__, __LINE__);
         return nullptr;
     }
 
     size_t dim = op1->getDim();
-    ISet* new_set = op1->clone();
+    ISet *new_set = op1->clone();
 
-    IIterator* set2_iter = op2->getBegin();
+    IIterator *set2_iter = op2->getBegin();
     for (; set2_iter->isValid(); set2_iter->next()) {
-        double* empty_data = new double[dim];
-        IVector* tmp_vec = IVector::createVector(dim, empty_data);
+        double *empty_data = new double[dim];
+        IVector *tmp_vec = IVector::createVector(dim, empty_data);
         delete[] empty_data;
-        
+
         RC err = set2_iter->getVectorCoords(tmp_vec);
         if (err != RC::SUCCESS) {
             delete tmp_vec;
@@ -477,7 +469,7 @@ ISet* ISet::makeUnion(ISet const * const& op1, ISet const * const& op2, IVector:
 
         err = new_set->findFirst(tmp_vec, n, tol);
         if (err == RC::VECTOR_NOT_FOUND)
-            new_set->insert(tmp_vec, n ,tol);
+            new_set->insert(tmp_vec, n, tol);
         else if (err != RC::SUCCESS) {
             delete tmp_vec;
             delete new_set;
@@ -492,19 +484,19 @@ ISet* ISet::makeUnion(ISet const * const& op1, ISet const * const& op2, IVector:
 
     return new_set;
 }
-ISet* ISet::sub(ISet const * const& op1, ISet const * const& op2, IVector::NORM n, double tol) {
+ISet *ISet::sub(ISet const *const &op1, ISet const *const &op2, IVector::NORM n, double tol) {
     if (op1->getDim() != op2->getDim()) {
         getLogger()->severe(RC::MISMATCHING_DIMENSIONS, __FILE__, __func__, __LINE__);
         return nullptr;
     }
 
     size_t dim = op1->getDim();
-    ISet* new_set = ISet::createSet();
+    ISet *new_set = ISet::createSet();
 
-    IIterator* set1_iter = op1->getBegin();
+    IIterator *set1_iter = op1->getBegin();
     for (; set1_iter->isValid(); set1_iter->next()) {
-        double* empty_data = new double[dim];
-        IVector* vec1 = IVector::createVector(dim, empty_data);
+        double *empty_data = new double[dim];
+        IVector *vec1 = IVector::createVector(dim, empty_data);
         delete[] empty_data;
 
         RC err = set1_iter->getVectorCoords(vec1);
@@ -514,13 +506,12 @@ ISet* ISet::sub(ISet const * const& op1, ISet const * const& op2, IVector::NORM 
             getLogger()->warning(err, __FILE__, __func__, __LINE__);
             return new_set;
         }
-        
+
         err = op2->findFirst(vec1, n, tol);
 
         if (err == RC::VECTOR_NOT_FOUND) {
             new_set->insert(vec1, n, tol);
-        }
-        else if (err != RC::SUCCESS) {
+        } else if (err != RC::SUCCESS) {
             getLogger()->warning(err, __FILE__, __func__, __LINE__);
             delete vec1;
             delete set1_iter;
@@ -532,16 +523,16 @@ ISet* ISet::sub(ISet const * const& op1, ISet const * const& op2, IVector::NORM 
 
     return new_set;
 }
-ISet* ISet::symSub(ISet const * const& op1, ISet const * const& op2, IVector::NORM n, double tol) {
-    ISet* un = ISet::makeUnion(op1, op2, n, tol);
-    ISet* inter = ISet::makeIntersection(op1, op2, n, tol);
-    ISet* sub = ISet::sub(un, inter, n, tol);
-    
+ISet *ISet::symSub(ISet const *const &op1, ISet const *const &op2, IVector::NORM n, double tol) {
+    ISet *un = ISet::makeUnion(op1, op2, n, tol);
+    ISet *inter = ISet::makeIntersection(op1, op2, n, tol);
+    ISet *sub = ISet::sub(un, inter, n, tol);
+
     delete un;
     delete inter;
     return sub;
 }
-bool ISet::equals(ISet const * const& op1, ISet const * const& op2, IVector::NORM n, double tol) {
+bool ISet::equals(ISet const *const &op1, ISet const *const &op2, IVector::NORM n, double tol) {
     if (op1->getSize() != op2->getSize()) {
         getLogger()->warning(RC::MISMATCHING_DIMENSIONS, __FILE__, __func__, __LINE__);
         return false;
@@ -549,7 +540,7 @@ bool ISet::equals(ISet const * const& op1, ISet const * const& op2, IVector::NOR
 
     return subSet(op1, op2, n, tol);
 }
-bool ISet::subSet(ISet const * const& op1, ISet const * const& op2, IVector::NORM n, double tol) {
+bool ISet::subSet(ISet const *const &op1, ISet const *const &op2, IVector::NORM n, double tol) {
     if (op1->getDim() != op2->getDim()) {
         getLogger()->severe(RC::MISMATCHING_DIMENSIONS, __FILE__, __func__, __LINE__);
         return false;
@@ -557,12 +548,12 @@ bool ISet::subSet(ISet const * const& op1, ISet const * const& op2, IVector::NOR
 
     size_t dim = op1->getDim();
 
-    IIterator* vec1_iter = op1->getBegin();
+    IIterator *vec1_iter = op1->getBegin();
     for (; vec1_iter != nullptr && vec1_iter->isValid(); vec1_iter->next()) {
-        double* empty_data = new double[dim];
-        IVector* vec1 = IVector::createVector(dim, empty_data);
+        double *empty_data = new double[dim];
+        IVector *vec1 = IVector::createVector(dim, empty_data);
         delete[] empty_data;
-        
+
         RC err = vec1_iter->getVectorCoords(vec1);
         if (err != RC::SUCCESS) {
             delete vec1;
@@ -570,14 +561,13 @@ bool ISet::subSet(ISet const * const& op1, ISet const * const& op2, IVector::NOR
             getLogger()->warning(err, __FILE__, __func__, __LINE__);
             return false;
         }
-        
+
         err = op2->findFirst(vec1, n, tol);
         if (err == RC::VECTOR_NOT_FOUND) {
             delete vec1;
             delete vec1_iter;
             return false;
-        }
-        else if (err != RC::SUCCESS) {
+        } else if (err != RC::SUCCESS) {
             delete vec1;
             delete vec1_iter;
             getLogger()->warning(err, __FILE__, __func__, __LINE__);
@@ -590,10 +580,6 @@ bool ISet::subSet(ISet const * const& op1, ISet const * const& op2, IVector::NOR
 
     return true;
 }
-RC ISet::IIterator::setLogger(ILogger * const pLogger) {
-    return SetImpl::IteratorImpl::setLogger(pLogger);
-}
-ILogger* ISet::IIterator::getLogger() {
-    return SetImpl::IteratorImpl::getLogger();
-}
+RC ISet::IIterator::setLogger(ILogger *const pLogger) { return SetImpl::IteratorImpl::setLogger(pLogger); }
+ILogger *ISet::IIterator::getLogger() { return SetImpl::IteratorImpl::getLogger(); }
 ISet::~ISet() = default;
