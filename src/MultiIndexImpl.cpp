@@ -32,7 +32,7 @@ IMultiIndex *MultiIndexImpl::createMultiIndex(size_t dim, const size_t *indices)
         return nullptr;
     }
     IMultiIndex *multi_ind = new (ptr) MultiIndexImpl(dim);
-    std::memcpy((u_int8_t *)(ptr) + sizeof(MultiIndexImpl), indices, dim * sizeof(double));
+    std::memcpy((u_int8_t *)(ptr) + sizeof(MultiIndexImpl), indices, dim * sizeof(size_t));
 
     return multi_ind;
 }
