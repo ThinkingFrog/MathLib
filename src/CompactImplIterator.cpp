@@ -134,6 +134,7 @@ ICompact::IIterator *CompactImpl::getIterator(IMultiIndex const *const &index,
         delete order_copy;
         return nullptr;
     }
+    IIterator::setLogger(logger);
 
     return new_iter;
 }
