@@ -1,5 +1,4 @@
 #include "tests.hpp"
-#include <array>
 #include <cassert>
 #include <iostream>
 
