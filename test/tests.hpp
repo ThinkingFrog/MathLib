@@ -35,7 +35,14 @@
 #define CREATE_INDEX_TWO                                                                                               \
     std::array<size_t, 4> idata2({12, 76, 44, 89});                                                                    \
     IMultiIndex *index2 = IMultiIndex::createMultiIndex(idata2.size(), idata2.data());
-#define CREATE_COM_ONE ICompact *com1 = ICompact::createCompact(vec1, vec2, index1);
+#define CREATE_COM_ONE                                                                                                 \
+    std::array<double, 2> left_bound_data({0, 5});                                                                     \
+    IVector *left_bound = IVector::createVector(left_bound_data.size(), left_bound_data.data());                       \
+    std::array<double, 2> right_bound_data({4, 10});                                                                   \
+    IVector *right_bound = IVector::createVector(right_bound_data.size(), right_bound_data.data());                    \
+    std::array<size_t, 2> grid_data({5, 6});                                                                           \
+    IMultiIndex *grid = IMultiIndex::createMultiIndex(grid_data.size(), grid_data.data());                             \
+    ICompact *com1 = ICompact::createCompact(left_bound, right_bound, grid);
 #define CREATE_ALL                                                                                                     \
     CREATE_LOGGER CREATE_VEC_ONE CREATE_VEC_TWO CREATE_VEC_THREE CREATE_SET_ONE CREATE_SET_TWO CREATE_SET_THREE        \
         CREATE_VEC_FOUR CREATE_INDEX_ONE CREATE_INDEX_TWO CREATE_COM_ONE
@@ -50,7 +57,11 @@
 #define CLEAR_SET_THREE delete set3;
 #define CLEAR_INDEX_ONE delete index1;
 #define CLEAR_INDEX_TWO delete index2;
-#define CLEAR_COM_ONE delete com1;
+#define CLEAR_COM_ONE                                                                                                  \
+    delete left_bound;                                                                                                 \
+    delete right_bound;                                                                                                \
+    delete grid;                                                                                                       \
+    delete com1;
 #define CLEAR_ALL                                                                                                      \
     CLEAR_LOGGER CLEAR_VEC_ONE CLEAR_VEC_TWO CLEAR_VEC_THREE CLEAR_SET_ONE CLEAR_SET_TWO CLEAR_SET_THREE               \
         CLEAR_VEC_FOUR CLEAR_INDEX_ONE CLEAR_INDEX_TWO CLEAR_COM_ONE

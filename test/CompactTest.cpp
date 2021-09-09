@@ -22,7 +22,7 @@ void CompactTest::testClone() {
 void CompactTest::testGetDim() {
     CREATE_ALL
 
-    assert(com1->getDim() == vec1->getDim());
+    assert(com1->getDim() == left_bound->getDim());
 
     CLEAR_ALL
 }
@@ -31,7 +31,7 @@ void CompactTest::testGetGrid() {
     IMultiIndex *tmp = com1->getGrid();
 
     const size_t *tmp_data = tmp->getData();
-    const size_t *index_data = index1->getData();
+    const size_t *index_data = grid->getData();
     for (size_t idx = 0; idx < com1->getDim(); ++idx)
         assert(tmp_data[idx] == index_data[idx]);
 
@@ -44,7 +44,7 @@ void CompactTest::testGetLeftBoundary() {
 
     RC err = com1->getLeftBoundary(left);
     assert(err == RC::SUCCESS);
-    assert(IVector::equals(vec1, left, DEFAULT_NORM, TOLERANCE));
+    assert(IVector::equals(left_bound, left, DEFAULT_NORM, TOLERANCE));
 
     delete left;
     CLEAR_ALL
@@ -55,7 +55,7 @@ void CompactTest::testGetRightBoundary() {
 
     RC err = com1->getRightBoundary(right);
     assert(err == RC::SUCCESS);
-    assert(IVector::equals(vec2, right, DEFAULT_NORM, TOLERANCE));
+    assert(IVector::equals(right_bound, right, DEFAULT_NORM, TOLERANCE));
 
     delete right;
     CLEAR_ALL
@@ -64,8 +64,10 @@ void CompactTest::testGetVectorCoords() {
     CREATE_ALL
     double *empty_data = new double[com1->getDim()];
     IVector *tmp = IVector::createVector(com1->getDim(), empty_data);
+    std::array<size_t, 2> index_data({5, 6});
+    IMultiIndex *test_idx = IMultiIndex::createMultiIndex(com1->getDim(), )
 
-    //    RC err = com1->getVectorCoords();
+        RC err = com1->getVectorCoords();
 
     delete[] empty_data;
     delete tmp;
