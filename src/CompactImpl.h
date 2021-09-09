@@ -22,6 +22,7 @@ class LIB_EXPORT CompactImpl : public ICompact {
 
     class IteratorImpl : public IIterator {
       public:
+        IteratorImpl(IVector *vec, IMultiIndex *idx, IMultiIndex *bypass_order, CompactImplControlBlock *cb);
         IIterator *getNext() override;
         IIterator *clone() const override;
 
@@ -30,32 +31,23 @@ class LIB_EXPORT CompactImpl : public ICompact {
 
         RC next() override;
 
-        /*
-         * Iterator is invalid, if it was moved forward, when iterator wasn't able to move
-         */
         bool isValid() const override;
 
-        /*
-         * Method creating new IVector and assigning new address to val
-         */
         RC getVectorCopy(IVector *&val) const override;
-        /*
-         * Method copy data from vector in ISet to vector val
-         */
         RC getVectorCoords(IVector *const &val) const override;
 
       private:
         bool valid;
         IVector *vector;
+        IMultiIndex *index;
+        IMultiIndex *order;
         CompactImplControlBlock *control_block;
+        static ILogger *logger;
     };
 
     IIterator *getIterator(IMultiIndex const *const &index, IMultiIndex const *const &bypassOrder) const override;
-    // возвращает итератор на левейшую границу
     IIterator *getBegin(IMultiIndex const *const &bypassOrder) const override;
-    // возвращает итератор на правейшую границу
     IIterator *getEnd(IMultiIndex const *const &bypassOrder) const override;
-    RC moveIterator(IMultiIndex *const &currentIndex, IMultiIndex const *const &bypassOrder);
 
     ~CompactImpl();
 
@@ -65,6 +57,7 @@ class LIB_EXPORT CompactImpl : public ICompact {
     const IVector *right_boundary;
     const IMultiIndex *grid;
     size_t dim;
+    CompactImplControlBlock *control_block;
 
     CompactImpl(const IVector *left, const IVector *right, const IMultiIndex *nodes);
 };

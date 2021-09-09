@@ -9,12 +9,14 @@ CompactImpl::CompactImpl(const IVector *left, const IVector *right, const IMulti
     right_boundary = right->clone();
     grid = nodes->clone();
     dim = left_boundary->getDim();
+    control_block = new CompactImplControlBlock(this);
 }
 
 CompactImpl::~CompactImpl() {
     delete left_boundary;
     delete right_boundary;
     delete grid;
+    delete control_block;
 }
 
 ICompact *CompactImpl::createCompact(IVector const *vec1, IVector const *vec2, IMultiIndex const *nodeQuantities) {
@@ -143,10 +145,6 @@ ICompact *ICompact::createCompact(IVector const *vec1, IVector const *vec2, IMul
 RC ICompact::setLogger(ILogger *const logger) { return CompactImpl::setLogger(logger); }
 
 ILogger *ICompact::getLogger() { return CompactImpl::getLogger(); }
-
-RC CompactImpl::moveIterator(IMultiIndex *const &currentIndex, IMultiIndex const *const &bypassOrder) {
-    return RC::SUCCESS;
-}
 
 ICompact *ICompact::createIntersection(ICompact const *op1, ICompact const *op2, IMultiIndex const *const grid,
                                        double tol) {
@@ -408,11 +406,5 @@ ICompact *ICompact::createCompactSpan(ICompact const *op1, ICompact const *op2, 
 
     return union_res;
 }
-
-RC ICompact::IIterator::setLogger(ILogger *const logger) { return CompactImpl::IteratorImpl::setLogger(logger); }
-
-ILogger *ICompact::IIterator::getLogger() { return CompactImpl::IteratorImpl::getLogger(); }
-
-ICompact::IIterator::~IIterator() = default;
 
 ICompact::~ICompact() = default;
