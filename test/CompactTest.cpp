@@ -22,7 +22,7 @@ void CompactTest::testClone() {
 void CompactTest::testGetDim() {
     CREATE_ALL
 
-    assert(com1->getDim() == left_bound->getDim());
+    assert(com1->getDim() == left_bound1->getDim());
 
     CLEAR_ALL
 }
@@ -31,7 +31,7 @@ void CompactTest::testGetGrid() {
     IMultiIndex *tmp = com1->getGrid();
 
     const size_t *tmp_data = tmp->getData();
-    const size_t *index_data = grid->getData();
+    const size_t *index_data = grid1->getData();
     for (size_t idx = 0; idx < com1->getDim(); ++idx)
         assert(tmp_data[idx] == index_data[idx]);
 
@@ -44,7 +44,7 @@ void CompactTest::testGetLeftBoundary() {
 
     RC err = com1->getLeftBoundary(left);
     assert(err == RC::SUCCESS);
-    assert(IVector::equals(left_bound, left, DEFAULT_NORM, TOLERANCE));
+    assert(IVector::equals(left_bound1, left, DEFAULT_NORM, TOLERANCE));
 
     delete left;
     CLEAR_ALL
@@ -55,7 +55,7 @@ void CompactTest::testGetRightBoundary() {
 
     RC err = com1->getRightBoundary(right);
     assert(err == RC::SUCCESS);
-    assert(IVector::equals(right_bound, right, DEFAULT_NORM, TOLERANCE));
+    assert(IVector::equals(right_bound1, right, DEFAULT_NORM, TOLERANCE));
 
     delete right;
     CLEAR_ALL
@@ -94,6 +94,7 @@ void CompactTest::testGetVectorCopy() {
 }
 
 void CompactTest::testIsInside() {
+    CREATE_LOGGER
     CREATE_COM_ONE
     std::array<double, 2> tmp_vec_data({2.5, 4.3});
     IVector *tmp = IVector::createVector(tmp_vec_data.size(), tmp_vec_data.data());
@@ -101,7 +102,69 @@ void CompactTest::testIsInside() {
     assert(com1->isInside(tmp));
 
     delete tmp;
+    CLEAR_LOGGER
     CLEAR_COM_ONE
+}
+
+void CompactTest::testIntersection() {
+    CREATE_LOGGER
+    CREATE_COM_ONE
+    CREATE_COM_TWO
+
+    ICompact *inter = ICompact::createIntersection(com1, com2, grid1, TOLERANCE);
+    assert(inter != nullptr);
+
+    IVector *inter_left;
+    RC err = inter->getLeftBoundary(inter_left);
+    assert(err == RC::SUCCESS);
+    assert(IVector::equals(inter_left, left_bound2, DEFAULT_NORM, TOLERANCE));
+
+    IVector *inter_right;
+    err = inter->getRightBoundary(inter_right);
+    assert(err == RC::SUCCESS);
+    assert(IVector::equals(inter_right, right_bound1, DEFAULT_NORM, TOLERANCE));
+
+    IMultiIndex *inter_grid = inter->getGrid();
+    assert(inter_grid != nullptr);
+    for (size_t idx = 0; idx < inter_grid->getDim(); ++idx)
+        assert(inter_grid->getData()[idx] == grid1->getData()[idx]);
+
+    delete inter_grid;
+    delete inter_left;
+    delete inter_right;
+    CLEAR_COM_TWO
+    CLEAR_COM_ONE
+    CLEAR_LOGGER
+}
+void CompactTest::testSpan() {
+    CREATE_LOGGER
+    CREATE_COM_ONE
+    CREATE_COM_TWO
+
+    ICompact *span = ICompact::createCompactSpan(com1, com2, grid1);
+    assert(span != nullptr);
+
+    IVector *span_left;
+    RC err = span->getLeftBoundary(span_left);
+    assert(err == RC::SUCCESS);
+    assert(IVector::equals(span_left, left_bound1, DEFAULT_NORM, TOLERANCE));
+
+    IVector *span_right;
+    err = span->getRightBoundary(span_right);
+    assert(err == RC::SUCCESS);
+    assert(IVector::equals(span_right, right_bound2, DEFAULT_NORM, TOLERANCE));
+
+    IMultiIndex *span_grid = span->getGrid();
+    assert(span_grid != nullptr);
+    for (size_t idx = 0; idx < span_grid->getDim(); ++idx)
+        assert(span_grid->getData()[idx] == grid1->getData()[idx]);
+
+    delete span_grid;
+    delete span_left;
+    delete span_right;
+    CLEAR_COM_TWO
+    CLEAR_COM_ONE
+    CLEAR_LOGGER
 }
 
 void CompactTest::testAll() {
@@ -116,6 +179,8 @@ void CompactTest::testAll() {
     testGetVectorCoords();
     testGetVectorCopy();
     testIsInside();
+    testIntersection();
+    testSpan();
 
     std::cout << "Successfully ran all Compact tests" << std::endl;
 }
