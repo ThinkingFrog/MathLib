@@ -36,11 +36,11 @@
     std::array<size_t, 4> idata2({12, 76, 44, 89});                                                                    \
     IMultiIndex *index2 = IMultiIndex::createMultiIndex(idata2.size(), idata2.data());
 #define CREATE_COM_ONE                                                                                                 \
-    std::array<double, 2> left_bound_data({0, 5});                                                                     \
+    std::array<double, 2> left_bound_data({0, 0});                                                                     \
     IVector *left_bound = IVector::createVector(left_bound_data.size(), left_bound_data.data());                       \
-    std::array<double, 2> right_bound_data({4, 10});                                                                   \
+    std::array<double, 2> right_bound_data({5, 5});                                                                    \
     IVector *right_bound = IVector::createVector(right_bound_data.size(), right_bound_data.data());                    \
-    std::array<size_t, 2> grid_data({5, 6});                                                                           \
+    std::array<size_t, 2> grid_data({6, 6});                                                                           \
     IMultiIndex *grid = IMultiIndex::createMultiIndex(grid_data.size(), grid_data.data());                             \
     ICompact *com1 = ICompact::createCompact(left_bound, right_bound, grid);
 #define CREATE_ALL                                                                                                     \

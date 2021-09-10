@@ -64,18 +64,45 @@ void CompactTest::testGetVectorCoords() {
     CREATE_ALL
     double *empty_data = new double[com1->getDim()];
     IVector *tmp = IVector::createVector(com1->getDim(), empty_data);
-    std::array<size_t, 2> index_data({5, 6});
-    IMultiIndex *test_idx = IMultiIndex::createMultiIndex(com1->getDim(), )
+    std::array<size_t, 2> index_data({3, 3});
+    IMultiIndex *test_idx = IMultiIndex::createMultiIndex(index_data.size(), index_data.data());
 
-        RC err = com1->getVectorCoords();
+    std::array<double, 2> expected_vec_data({3, 3});
+    RC err = com1->getVectorCoords(test_idx, tmp);
+    for (size_t idx = 0; idx < expected_vec_data.size(); ++idx)
+        assert(tmp->getData()[idx] == expected_vec_data[idx]);
 
     delete[] empty_data;
     delete tmp;
+    delete test_idx;
     CLEAR_ALL
 }
-void CompactTest::testGetVectorCopy() {}
+void CompactTest::testGetVectorCopy() {
+    CREATE_ALL
+    IVector *tmp;
+    std::array<size_t, 2> index_data({3, 3});
+    IMultiIndex *test_idx = IMultiIndex::createMultiIndex(index_data.size(), index_data.data());
 
-void CompactTest::testIsInside() {}
+    std::array<double, 2> expected_vec_data({3, 3});
+    RC err = com1->getVectorCopy(test_idx, tmp);
+    for (size_t idx = 0; idx < expected_vec_data.size(); ++idx)
+        assert(tmp->getData()[idx] == expected_vec_data[idx]);
+
+    delete tmp;
+    delete test_idx;
+    CLEAR_ALL
+}
+
+void CompactTest::testIsInside() {
+    CREATE_COM_ONE
+    std::array<double, 2> tmp_vec_data({2.5, 4.3});
+    IVector *tmp = IVector::createVector(tmp_vec_data.size(), tmp_vec_data.data());
+
+    assert(com1->isInside(tmp));
+
+    delete tmp;
+    CLEAR_COM_ONE
+}
 
 void CompactTest::testAll() {
     std::cout << "Running all Compact tests" << std::endl;
