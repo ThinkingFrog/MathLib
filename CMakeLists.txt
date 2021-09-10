@@ -5,10 +5,10 @@ set(CMAKE_CXX_STANDARD 11)
 include_directories(include)
 include_directories(test)
 
-file(GLOB SRC_VECTOR src/VectorImpl.cpp src/LoggerImpl.cpp)
-file(GLOB SRC_SET src/SetImpl.h src/SetImplControlBlock.h
+set(SRC_VECTOR src/VectorImpl.cpp src/LoggerImpl.cpp)
+set(SRC_SET src/SetImpl.h src/SetImplControlBlock.h
     src/LoggerImpl.cpp src/SetImpl.cpp src/SetImplIterator.cpp src/SetImplControlBlock.cpp)
-file(GLOB SRC_COMPACT src/CompactImpl.h src/CompactImplControlBlock.h src/MultiIndexImpl.h
+set(SRC_COMPACT src/CompactImpl.h src/CompactImplControlBlock.h src/MultiIndexImpl.h
     src/LoggerImpl.cpp src/CompactImpl.cpp src/CompactImplIterator.cpp
     src/CompactImplControlBlock.cpp src/MultiIndexImpl.cpp src/CompactImplIterator.cpp)
 
