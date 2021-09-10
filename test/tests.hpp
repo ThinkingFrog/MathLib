@@ -172,5 +172,7 @@ void testIsInside();
 void testIntersection();
 void testSpan();
 
+void testIterator();
+
 void testAll();
 }; // namespace CompactTest

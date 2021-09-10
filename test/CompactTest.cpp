@@ -167,6 +167,29 @@ void CompactTest::testSpan() {
     CLEAR_LOGGER
 }
 
+void CompactTest::testIterator() {
+    CREATE_LOGGER
+    CREATE_COM_ONE
+
+    IVector *iter_vec = nullptr;
+    std::array<size_t, 2> order_data({0, 1});
+    IMultiIndex *order = IMultiIndex::createMultiIndex(order_data.size(), order_data.data());
+    ICompact::IIterator *iter = com1->getBegin(order);
+
+    for (; iter->isValid(); iter->next()) {
+        RC err = iter->getVectorCopy(iter_vec);
+        assert(err == RC::SUCCESS);
+        assert(iter_vec != nullptr);
+        delete iter_vec;
+        iter_vec = nullptr;
+    }
+
+    delete iter;
+    delete order;
+    CLEAR_COM_ONE
+    CLEAR_LOGGER
+}
+
 void CompactTest::testAll() {
     std::cout << "Running all Compact tests" << std::endl;
 
@@ -181,6 +204,7 @@ void CompactTest::testAll() {
     testIsInside();
     testIntersection();
     testSpan();
+    testIterator();
 
     std::cout << "Successfully ran all Compact tests" << std::endl;
 }
