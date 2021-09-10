@@ -8,6 +8,7 @@ CompactImpl::IteratorImpl::IteratorImpl(IVector *vec, IMultiIndex *idx, IMultiIn
     index = idx;
     order = bypass_order;
     control_block = cb;
+    valid = true;
 }
 
 CompactImpl::IteratorImpl::~IteratorImpl() {
@@ -136,7 +137,7 @@ ICompact::IIterator *CompactImpl::getIterator(IMultiIndex const *const &index,
         return nullptr;
     }
 
-    IIterator *new_iter = new (std::nothrow) IteratorImpl(vec_copy, index_copy, order_copy, control_block);
+    IteratorImpl *new_iter = new (std::nothrow) IteratorImpl(vec_copy, index_copy, order_copy, control_block);
     if (new_iter == nullptr) {
         logger->severe(RC::ALLOCATION_ERROR, __FILE__, __func__, __LINE__);
         delete vec_copy;
@@ -144,7 +145,7 @@ ICompact::IIterator *CompactImpl::getIterator(IMultiIndex const *const &index,
         delete order_copy;
         return nullptr;
     }
-    IIterator::setLogger(logger);
+    IteratorImpl::setLogger(logger);
 
     return new_iter;
 }
