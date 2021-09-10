@@ -93,6 +93,11 @@ RC MultiIndexImpl::incAxisIndex(size_t index, ssize_t val) {
     return RC::SUCCESS;
 }
 
+void MultiIndexImpl::operator delete(void *ptr, size_t size) {
+    if (ptr)
+        delete[] reinterpret_cast<u_int8_t *>(ptr);
+}
+
 IMultiIndex *IMultiIndex::createMultiIndex(size_t dim, const size_t *indices) {
     return MultiIndexImpl::createMultiIndex(dim, indices);
 }

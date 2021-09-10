@@ -1,7 +1,7 @@
 #include "CompactImplControlBlock.h"
 #include "CompactImpl.h"
 
-CompactImplControlBlock::CompactImplControlBlock(CompactImpl *compact) : compact(compact) {}
+CompactImplControlBlock::CompactImplControlBlock(CompactImpl *com) : compact(com) {}
 
 RC CompactImplControlBlock::get(IMultiIndex *const &currentIndex, IMultiIndex const *const &bypassOrder) const {
     if (currentIndex == nullptr || bypassOrder == nullptr) {

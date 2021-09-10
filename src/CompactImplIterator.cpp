@@ -3,8 +3,18 @@
 ILogger *CompactImpl::IteratorImpl::logger = nullptr;
 
 CompactImpl::IteratorImpl::IteratorImpl(IVector *vec, IMultiIndex *idx, IMultiIndex *bypass_order,
-                                        CompactImplControlBlock *cb)
-    : vector(vec), index(idx), order(bypass_order), control_block(cb) {}
+                                        CompactImplControlBlock *cb) {
+    vector = vec;
+    index = idx;
+    order = bypass_order;
+    control_block = cb;
+}
+
+CompactImpl::IteratorImpl::~IteratorImpl() {
+    delete vector;
+    delete index;
+    delete order;
+}
 
 ILogger *CompactImpl::IteratorImpl::getLogger() { return logger; }
 
@@ -106,7 +116,7 @@ ICompact::IIterator *CompactImpl::getIterator(IMultiIndex const *const &index,
         logger->severe(RC::MISMATCHING_DIMENSIONS, __FILE__, __func__, __LINE__);
     }
 
-    IVector *vec_copy;
+    IVector *vec_copy = nullptr;
     RC err = getVectorCopy(index, vec_copy);
     if (err != RC::SUCCESS) {
         logger->severe(err, __FILE__, __func__, __LINE__);

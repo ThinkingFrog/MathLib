@@ -23,6 +23,8 @@ class LIB_EXPORT CompactImpl : public ICompact {
     class IteratorImpl : public IIterator {
       public:
         IteratorImpl(IVector *vec, IMultiIndex *idx, IMultiIndex *bypass_order, CompactImplControlBlock *cb);
+        ~IteratorImpl();
+
         IIterator *getNext() override;
         IIterator *clone() const override;
 

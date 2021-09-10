@@ -77,7 +77,7 @@
     delete com2;
 #define CLEAR_ALL                                                                                                      \
     CLEAR_LOGGER CLEAR_VEC_ONE CLEAR_VEC_TWO CLEAR_VEC_THREE CLEAR_SET_ONE CLEAR_SET_TWO CLEAR_SET_THREE               \
-        CLEAR_VEC_FOUR CLEAR_INDEX_ONE CLEAR_INDEX_TWO CLEAR_COM_ONE
+        CLEAR_VEC_FOUR CLEAR_INDEX_ONE CLEAR_INDEX_TWO CLEAR_COM_ONE CLEAR_COM_TWO
 
 namespace VecTest {
 void testCreate();

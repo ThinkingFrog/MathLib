@@ -132,6 +132,7 @@ void CompactTest::testIntersection() {
     delete inter_grid;
     delete inter_left;
     delete inter_right;
+    delete inter;
     CLEAR_COM_TWO
     CLEAR_COM_ONE
     CLEAR_LOGGER
@@ -162,6 +163,7 @@ void CompactTest::testSpan() {
     delete span_grid;
     delete span_left;
     delete span_right;
+    delete span;
     CLEAR_COM_TWO
     CLEAR_COM_ONE
     CLEAR_LOGGER

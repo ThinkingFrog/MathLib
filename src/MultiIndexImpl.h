@@ -16,6 +16,8 @@ class LIB_EXPORT MultiIndexImpl : public IMultiIndex {
     static RC setLogger(ILogger *const pLogger);
     static ILogger *getLogger();
 
+    void operator delete(void *ptr, size_t size);
+
     RC getAxisIndex(size_t axisIndex, size_t &val) const override;
     RC setAxisIndex(size_t axisIndex, size_t val) override;
 

@@ -25,6 +25,7 @@ void MultiIndexTest::testClone() {
     for (size_t idx = 0; idx < idata1.size(); ++idx)
         assert(index1->getData()[idx] == index2->getData()[idx]);
 
+    delete index2;
     CLEAR_LOGGER
     CLEAR_INDEX_ONE
 }
