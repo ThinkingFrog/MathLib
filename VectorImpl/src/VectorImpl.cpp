@@ -1,8 +1,9 @@
 #include "IVector.h"
 #include <cmath>
+#include <cstdint>
 #include <cstring>
 
-#define PTR_DATA (double *)((u_int8_t *)(this) + sizeof(VectorImpl))
+#define PTR_DATA (double *)((uint8_t *)(this) + sizeof(VectorImpl))
 
 namespace {
 class VectorImpl : public IVector {
@@ -26,13 +27,13 @@ class VectorImpl : public IVector {
             return nullptr;
         }
 
-        u_int8_t *ptr = new (std::nothrow) u_int8_t[sizeof(VectorImpl) + dim * sizeof(double)];
+        uint8_t *ptr = new (std::nothrow) uint8_t[sizeof(VectorImpl) + dim * sizeof(double)];
         if (ptr == nullptr) {
             logger->warning(RC::ALLOCATION_ERROR, __FILE__, __func__, __LINE__);
             return nullptr;
         }
         IVector *vec = new (ptr) VectorImpl(dim);
-        std::memcpy((u_int8_t *)(ptr) + sizeof(VectorImpl), ptr_data, dim * sizeof(double));
+        std::memcpy((uint8_t *)(ptr) + sizeof(VectorImpl), ptr_data, dim * sizeof(double));
 
         return vec;
     }
@@ -156,7 +157,7 @@ class VectorImpl : public IVector {
 
     void operator delete(void *ptr, size_t size) {
         if (ptr)
-            delete[] reinterpret_cast<u_int8_t *>(ptr);
+            delete[] reinterpret_cast<uint8_t *>(ptr);
     }
 
     ~VectorImpl() = default;
@@ -175,7 +176,7 @@ IVector *IVector::createVector(size_t dim, double const *const &ptr_data) {
 }
 
 RC IVector::copyInstance(IVector *const dest, IVector const *const &src) {
-    if (!(abs((int)((u_int8_t *)src - (u_int8_t *)dest)) >= src->sizeAllocated())) {
+    if (!(abs((int)((uint8_t *)src - (uint8_t *)dest)) >= src->sizeAllocated())) {
         src->getLogger()->severe(RC::MEMORY_INTERSECTION, __FILE__, __func__, __LINE__);
         return RC::MEMORY_INTERSECTION;
     }
@@ -184,12 +185,12 @@ RC IVector::copyInstance(IVector *const dest, IVector const *const &src) {
         return RC::MISMATCHING_DIMENSIONS;
     }
 
-    std::memcpy((u_int8_t *)dest, (u_int8_t *)src, src->sizeAllocated());
+    std::memcpy((uint8_t *)dest, (uint8_t *)src, src->sizeAllocated());
     return RC::SUCCESS;
 }
 
 RC IVector::moveInstance(IVector *const dest, IVector *&src) {
-    if (!(abs((int)((u_int8_t *)src - (u_int8_t *)dest)) >= src->sizeAllocated())) {
+    if (!(abs((int)((uint8_t *)src - (uint8_t *)dest)) >= src->sizeAllocated())) {
         src->getLogger()->severe(RC::MEMORY_INTERSECTION, __FILE__, __func__, __LINE__);
         return RC::MEMORY_INTERSECTION;
     }
@@ -198,7 +199,7 @@ RC IVector::moveInstance(IVector *const dest, IVector *&src) {
         return RC::MISMATCHING_DIMENSIONS;
     }
 
-    std::memmove((u_int8_t *)dest, (u_int8_t *)src, src->sizeAllocated());
+    std::memmove((uint8_t *)dest, (uint8_t *)src, src->sizeAllocated());
     delete src;
     src = nullptr;
     return RC::SUCCESS;
