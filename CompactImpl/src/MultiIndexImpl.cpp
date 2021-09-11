@@ -1,5 +1,6 @@
 #include "MultiIndexImpl.h"
 #include <cmath>
+#include <cstdint>
 #include <cstring>
 #include <new>
 
@@ -26,13 +27,13 @@ IMultiIndex *MultiIndexImpl::createMultiIndex(size_t dim, const size_t *indices)
         return nullptr;
     }
 
-    u_int8_t *ptr = new (std::nothrow) u_int8_t[sizeof(MultiIndexImpl) + dim * sizeof(size_t)];
+    uint8_t *ptr = new (std::nothrow) uint8_t[sizeof(MultiIndexImpl) + dim * sizeof(size_t)];
     if (ptr == nullptr) {
         logger->warning(RC::ALLOCATION_ERROR, __FILE__, __func__, __LINE__);
         return nullptr;
     }
     IMultiIndex *multi_ind = new (ptr) MultiIndexImpl(dim);
-    std::memcpy((u_int8_t *)(ptr) + sizeof(MultiIndexImpl), indices, dim * sizeof(size_t));
+    std::memcpy((uint8_t *)(ptr) + sizeof(MultiIndexImpl), indices, dim * sizeof(size_t));
 
     return multi_ind;
 }
@@ -95,7 +96,7 @@ RC MultiIndexImpl::incAxisIndex(size_t index, ssize_t val) {
 
 void MultiIndexImpl::operator delete(void *ptr, size_t size) {
     if (ptr)
-        delete[] reinterpret_cast<u_int8_t *>(ptr);
+        delete[] reinterpret_cast<uint8_t *>(ptr);
 }
 
 IMultiIndex *IMultiIndex::createMultiIndex(size_t dim, const size_t *indices) {

@@ -108,11 +108,11 @@ void SetTest::testRemoveByIndex() {
     assert(err == RC::SUCCESS);
 
     err = set1->remove(1);
-    assert(err = RC::SUCCESS);
+    assert(err == RC::SUCCESS);
     assert(set1->getSize() == 1);
 
     err = set1->remove(1);
-    assert(err = RC::INDEX_OUT_OF_BOUND);
+    assert(err == RC::INDEX_OUT_OF_BOUND);
     assert(set1->getSize() == 1);
 
     CLEAR_ALL
@@ -128,15 +128,15 @@ void SetTest::testRemoveByPattern() {
     assert(err == RC::SUCCESS);
 
     err = set1->remove(vec2, DEFAULT_NORM, TOLERANCE);
-    assert(err = RC::SUCCESS);
+    assert(err == RC::SUCCESS);
     assert(set1->getSize() == 1);
 
     err = set1->remove(vec1, DEFAULT_NORM, TOLERANCE);
-    assert(err = RC::SUCCESS);
+    assert(err == RC::SUCCESS);
     assert(set1->getSize() == 0);
 
     err = set1->remove(vec1, DEFAULT_NORM, TOLERANCE);
-    assert(err = RC::SOURCE_SET_EMPTY);
+    assert(err == RC::SOURCE_SET_EMPTY);
 
     CLEAR_ALL
 }
@@ -195,7 +195,7 @@ void SetTest::testFindFirstAndCopy() {
     RC err;
 
     err = set1->insert(vec1, DEFAULT_NORM, TOLERANCE);
-    assert(err = RC::SUCCESS);
+    assert(err == RC::SUCCESS);
     err = set1->insert(vec2, DEFAULT_NORM, TOLERANCE);
     assert(err == RC::SUCCESS);
 

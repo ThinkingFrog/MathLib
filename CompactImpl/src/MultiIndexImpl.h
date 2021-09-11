@@ -1,7 +1,7 @@
 #pragma once
 #include "IMultiIndex.h"
 
-#define PTR_DATA (size_t *)((u_int8_t *)(this) + sizeof(MultiIndexImpl))
+#define PTR_DATA (size_t *)((uint8_t *)(this) + sizeof(MultiIndexImpl))
 
 class LIB_EXPORT MultiIndexImpl : public IMultiIndex {
   public:
