@@ -8,4 +8,5 @@ include_directories(test)
 file(GLOB TEST test/*.cpp)
 
 add_executable(${PROJECT_NAME} ${TEST})
+target_link_directories(${PROJECT_NAME} PUBLIC lib)
 target_link_libraries(${PROJECT_NAME} VectorImpl SetImpl CompactImpl)
