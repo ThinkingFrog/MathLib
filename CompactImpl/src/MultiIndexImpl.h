@@ -1,4 +1,5 @@
 #pragma once
+#include <cstdint>
 #include "IMultiIndex.h"
 
 #define PTR_DATA (size_t *)((uint8_t *)(this) + sizeof(MultiIndexImpl))

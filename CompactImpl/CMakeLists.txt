@@ -10,5 +10,7 @@ set(SRC_COMPACT src/CompactImpl.h src/CompactImplControlBlock.h src/MultiIndexIm
     src/CompactImplControlBlock.cpp src/MultiIndexImpl.cpp src/CompactImplIterator.cpp)
 
 add_library(${PROJECT_NAME} SHARED ${SRC_COMPACT})
-target_link_directories(${PROJECT_NAME} PUBLIC lib)
-target_link_libraries(${PROJECT_NAME} VectorImpl)
+# What's for? target_link_directories(${PROJECT_NAME} PUBLIC lib)
+# find_library ???
+find_library(VECTOR_LIB NAMES libVectorImpl VectorImpl lVectorImpl HINTS "lib/")
+target_link_libraries(${PROJECT_NAME} ${VECTOR_LIB})

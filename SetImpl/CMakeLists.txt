@@ -9,5 +9,7 @@ set(SRC_SET src/SetImpl.h src/SetImplControlBlock.h
     src/LoggerImpl.cpp src/SetImpl.cpp src/SetImplIterator.cpp src/SetImplControlBlock.cpp)
 
 add_library(${PROJECT_NAME} SHARED ${SRC_SET})
-target_link_directories(${PROJECT_NAME} PUBLIC lib)
-target_link_libraries(${PROJECT_NAME} VectorImpl)
+# What's for? target_link_directories(${PROJECT_NAME} PUBLIC lib)
+# find_library ???
+find_library(VECTOR_LIB NAMES libVectorImpl VectorImpl lVectorImpl HINTS "lib/")
+target_link_libraries(${PROJECT_NAME} ${VECTOR_LIB})
